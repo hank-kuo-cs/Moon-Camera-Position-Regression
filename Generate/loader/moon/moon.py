@@ -1,0 +1,23 @@
+from loader.model import MoonObject, MoonMaterial, MoonTexture, MoonView, MoonLight
+
+
+class Moon:
+    def __init__(self, obj: MoonObject, mtl: MoonMaterial, texture: MoonTexture, light: MoonLight, view: MoonView):
+        self.obj = obj
+        self.mtl = mtl
+        self.texture = texture
+        self.light = light
+        self.view = view
+
+    def set_view(self):
+        pass
+
+    def set_light(self):
+        pass
+
+    def check_parameters(self):
+        assert type(self.obj) == MoonObject
+        assert type(self.mtl) == MoonMaterial
+        assert type(self.texture) == MoonTexture
+        assert type(self.light) == MoonLight
+        assert type(self.view) == MoonView
