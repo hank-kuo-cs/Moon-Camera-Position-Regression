@@ -8,6 +8,9 @@ from OpenGL.GL import glClear, glCallList, glColor, glFlush, GL_COLOR_BUFFER_BIT
 from OpenGL.GLUT import glutDisplayFunc, glutSwapBuffers, glutMainLoop, glutWireTeapot
 
 
+list_id = 0
+
+
 class Renderer:
     def __init__(self, moon: Moon):
         self.moon = moon
@@ -54,20 +57,27 @@ class Renderer:
         self.moon_setting.set_moon()
 
     def draw_moon(self):
-        def temp():
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-            glColor(120.0, 120.0, 120.0)
-            # glutWireTeapot(0.6)
-            # self.light_setting.set_light()
-            # self.view_setting.set_view()
-            glCallList(self.moon_setting.polygon_list_id)
-            glutSwapBuffers()
+        global list_id
+        list_id = self.moon_setting.polygon_list_id
 
-        glutDisplayFunc(temp)
+        glutDisplayFunc(display)
         glutMainLoop()
+
+
 
     @staticmethod
     def export_image(image_path):
         image_decoder = ImageDecoder(image_path)
         image_decoder.get_image_from_gl_buffer()
         image_decoder.save_image()
+
+
+def display():
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glColor(120.0, 120.0, 120.0)
+    # glutWireTeapot(0.6)
+    # self.light_setting.set_light()
+    # self.view_setting.set_view()
+    global list_id
+    glCallList(list_id)
+    glutSwapBuffers()
