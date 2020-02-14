@@ -1,7 +1,5 @@
 from loader.moon import Moon
-from loader.model import MoonFaceQuadMesh
 from renderer.material.lib import *
-from config import *
 from OpenGL.GL import glDisable, GL_TEXTURE_2D
 from tqdm import tqdm
 

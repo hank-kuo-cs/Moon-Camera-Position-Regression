@@ -11,8 +11,8 @@ from OpenGL.GLUT import glutDisplayFunc, glutSwapBuffers, glutMainLoop, glutWire
 class Renderer:
     def __init__(self, moon: Moon):
         self.moon = moon
-        # logging.info('Declare glut window')
-        # self.window_setting = GLUTWindowSetting()
+        logging.info('Declare glut window')
+        self.window_setting = GLUTWindowSetting()
         logging.info('Declare light')
         self.light_setting = LightSetting(self.moon.light)
         logging.info('Declare view')
@@ -23,21 +23,23 @@ class Renderer:
         self.moon_setting = MoonSetting(self.moon)
 
     def render_moon(self):
-        # logging.info('set window')
-        # self.set_window()
+        logging.info('set window')
+        self.set_window()
         logging.info('set light')
         self.set_light()
         logging.info('set view')
         self.set_view()
         logging.info('set texture')
         self.set_texture()
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glColor(120.0, 120.0, 120.0)
         logging.info('set moon')
         self.set_moon()
         logging.info('draw moon')
         self.draw_moon()
 
-    # def set_window(self):
-    #     self.window_setting.set_display_window()
+    def set_window(self):
+        self.window_setting.set_display_window()
 
     def set_light(self):
         self.light_setting.set_light()
@@ -52,18 +54,17 @@ class Renderer:
         self.moon_setting.set_moon()
 
     def draw_moon(self):
-        # def temp():
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glColor(120.0, 120.0, 120.0)
-        # glutWireTeapot(0.6)
+        def temp():
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+            glColor(120.0, 120.0, 120.0)
+            # glutWireTeapot(0.6)
             # self.light_setting.set_light()
             # self.view_setting.set_view()
-        glCallList(self.moon_setting.polygon_list_id)
-            # glutSwapBuffers()
-            # glFlush()
+            glCallList(self.moon_setting.polygon_list_id)
+            glutSwapBuffers()
 
-        # glutDisplayFunc(temp)
-        # glutMainLoop()
+        glutDisplayFunc(temp)
+        glutMainLoop()
 
     @staticmethod
     def export_image(image_path):
