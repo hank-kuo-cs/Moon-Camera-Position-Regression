@@ -9,6 +9,7 @@ from OpenGL.GL import \
     GL_AMBIENT, \
     GL_DIFFUSE, \
     GL_PROJECTION, \
-    GL_MODELVIEW
+    GL_MODELVIEW, \
+    GL_DEPTH_TEST
 
 from OpenGL.GLU import gluPerspective, gluLookAt

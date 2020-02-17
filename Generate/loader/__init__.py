@@ -19,30 +19,25 @@ def load_moon() -> Moon:
 
 
 def load_object():
-    logging.info('Load Object')
     object_encoder = ObjectEncoder(OBJECT_PATH)
     return object_encoder.load_object()
 
 
 def load_material():
-    logging.info('Load Material')
     material_encoder = MaterialEncoder(MATERIAL_PATH)
     return material_encoder.load_material()
 
 
 def load_texture():
-    logging.info('Load Texture')
     texture_encoder = TextureEncoder(TEXTURE_PATH)
     return texture_encoder.load_texture()
 
 
 def load_light():
-    logging.info('Load Light')
     light_encoder = LightEncoder()
     return light_encoder.load_light()
 
 
 def load_view():
-    logging.info('Load View')
     view_encoder = ViewEncoder()
     return view_encoder.load_view()

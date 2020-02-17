@@ -2,6 +2,7 @@ class MoonTexture:
     def __init__(self):
         self.width = 0
         self.height = 0
+        self.texture_id = None
         self.texture_bytes = None
 
     def check_parameters(self):

@@ -9,11 +9,13 @@ class Moon:
         self.light = light
         self.view = view
 
-    def set_view(self):
-        pass
+    def set_view(self, moon_view: MoonView):
+        self.check_parameters()
+        self.view = moon_view
 
-    def set_light(self):
-        pass
+    def set_light(self, moon_light: MoonLight):
+        self.check_parameters()
+        self.light = moon_light
 
     def check_parameters(self):
         assert type(self.obj) == MoonObject

@@ -5,6 +5,7 @@ from OpenGL.GL import \
     glGenLists, \
     glFrontFace, \
     glEnable, \
+    glDisable, \
     glNewList, \
     glEndList, \
     glBegin, \
@@ -13,6 +14,7 @@ from OpenGL.GL import \
     glNormal3fv, \
     glTexCoord2fv, \
     glGenTextures, \
+    glShadeModel, \
     GL_TEXTURE_2D, \
     GL_TEXTURE_MIN_FILTER, \
     GL_TEXTURE_MAG_FILTER, \
@@ -21,4 +23,8 @@ from OpenGL.GL import \
     GL_UNSIGNED_BYTE, \
     GL_POLYGON, \
     GL_CCW, \
-    GL_COMPILE
+    GL_COMPILE, \
+    GL_COLOR_MATERIAL, \
+    GL_DEPTH_TEST, \
+    GL_CULL_FACE, \
+    GL_SMOOTH

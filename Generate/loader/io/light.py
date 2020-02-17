@@ -1,4 +1,4 @@
-from config import POSITION_LIGHT, AMBIENT_LIGHT, DIFFUSE_LIGHT
+from config import LIGHT
 from loader.model import MoonLight
 
 
@@ -7,8 +7,8 @@ class LightEncoder:
         self.light = MoonLight()
 
     def load_light(self) -> MoonLight:
-        self.light.position_light = POSITION_LIGHT
-        self.light.ambient_light = AMBIENT_LIGHT
-        self.light.diffuse_light = DIFFUSE_LIGHT
+        self.light.position_light = LIGHT['position']
+        self.light.ambient_light = LIGHT['ambient']
+        self.light.diffuse_light = LIGHT['diffuse']
 
         return self.light
