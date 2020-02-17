@@ -1,72 +1,72 @@
+import cv2
+import pygame
+import numpy as np
 from config import *
 from loader.moon import Moon
-from renderer.window import GLUTWindowSetting
 from renderer.scene import LightSetting, ViewSetting
 from renderer.material import MoonSetting, TextureSetting
-from renderer.io import ImageDecoder
-from OpenGL.GL import glClear, glCallList, glColor, glFlush, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT
-from OpenGL.GLUT import glutDisplayFunc, glutSwapBuffers, glutMainLoop, glutWireTeapot
+from OpenGL.GL import glClear, glCallList, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT
 
 
 class Renderer:
     def __init__(self, moon: Moon):
         self.moon = moon
-        # logging.info('Declare glut window')
-        # self.window_setting = GLUTWindowSetting()
-        logging.info('Declare light')
-        self.light_setting = LightSetting(self.moon.light)
-        logging.info('Declare view')
-        self.view_setting = ViewSetting(self.moon.view)
-        logging.info('Declare texture')
-        self.texture_setting = TextureSetting(self.moon.texture)
-        logging.info('Declare moon')
-        self.moon_setting = MoonSetting(self.moon)
+        self.polygon_list_id = None
+        self.surface = None
+        self.setting_state = {'window': False, 'light': False, 'view': False, 'texture': False, 'moon': False}
 
-    def render_moon(self):
-        # logging.info('set window')
-        # self.set_window()
-        logging.info('set light')
-        self.set_light()
-        logging.info('set view')
-        self.set_view()
-        logging.info('set texture')
-        self.set_texture()
-        logging.info('set moon')
-        self.set_moon()
-        logging.info('draw moon')
-        self.draw_moon()
+    def set_window(self):
+        self.setting_state['window'] = True
 
-    # def set_window(self):
-    #     self.window_setting.set_display_window()
+        pygame.init()
+        self.surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
 
     def set_light(self):
-        self.light_setting.set_light()
+        self.check_window_state()
+        self.setting_state['light'] = True
+
+        LightSetting(self.moon.light).set_light()
 
     def set_view(self):
-        self.view_setting.set_view()
+        self.check_window_state()
+        self.setting_state['view'] = True
+
+        ViewSetting(self.moon.view).set_view()
 
     def set_texture(self):
-        self.texture_setting.set_texture()
+        self.check_window_state()
+        self.setting_state['texture'] = True
+
+        TextureSetting(self.moon.texture).set_texture()
 
     def set_moon(self):
-        self.moon_setting.set_moon()
+        self.check_window_state()
+        self.setting_state['moon'] = True
 
-    def draw_moon(self):
-        # def temp():
+        self.polygon_list_id = MoonSetting(self.moon).set_moon()
+
+    def render_moon(self):
+        self.check_setting_state()
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glColor(120.0, 120.0, 120.0)
-        # glutWireTeapot(0.6)
-            # self.light_setting.set_light()
-            # self.view_setting.set_view()
-        glCallList(self.moon_setting.polygon_list_id)
-            # glutSwapBuffers()
-            # glFlush()
+        glCallList(self.polygon_list_id)
 
-        # glutDisplayFunc(temp)
-        # glutMainLoop()
+    def save_image(self, image_path):
+        pygame.image.save(self.surface, image_path)
 
-    @staticmethod
-    def export_image(image_path):
-        image_decoder = ImageDecoder(image_path)
-        image_decoder.get_image_from_gl_buffer()
-        image_decoder.save_image()
+    def get_image(self):
+        image_bytes = pygame.image.tostring(self.surface, 'RGBA')
+        image = np.frombuffer(image_bytes, dtype=np.uint8)
+        image = np.reshape(image, (WINDOW_HEIGHT, WINDOW_WIDTH, 4))
+        image = cv2.cvtColor(image, cv2.COLOR_RGBA2GRAY)
+
+        return image
+
+    def check_setting_state(self):
+        for key, value in self.setting_state.items():
+            if not value:
+                raise ValueError('Not yet set up %d' % key)
+
+    def check_window_state(self):
+        if not self.setting_state['window']:
+            raise ValueError('Window need to be set up first')

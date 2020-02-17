@@ -1,34 +1,38 @@
 from loader.moon import Moon
-from loader.model import MoonFaceQuadMesh
 from renderer.material.lib import *
-from config import *
-from OpenGL.GL import glDisable, GL_TEXTURE_2D
-from tqdm import tqdm
 
 
 class MoonSetting:
     def __init__(self, moon: Moon):
         self.moon = moon
-        self.polygon_list_id = glGenLists(1)
 
     def set_moon(self):
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_CULL_FACE)
+        glShadeModel(GL_SMOOTH)
         glFrontFace(GL_CCW)
-        glNewList(self.polygon_list_id, GL_COMPILE)
-        glEnable(GL_TEXTURE_2D)
 
-        for face in tqdm(self.moon.obj.faces):
+        polygon_list_id = self.draw_polygon_list()
+        return polygon_list_id
+
+    def draw_polygon_list(self):
+        polygon_list_id = glGenLists(1)
+
+        glNewList(polygon_list_id, GL_COMPILE)
+
+        for face in self.moon.obj.faces:
             glBegin(GL_POLYGON)
-            face.check_parameters()
 
             for i in range(4):
-                vertex = self.moon.obj.vertices[face.vertex_indices[i]]
                 normal = self.moon.obj.normals[face.normal_indices[i]]
                 texture = self.moon.obj.tex_vertices[face.texture_indices[i]]
+                vertex = self.moon.obj.vertices[face.vertex_indices[i]]
 
-                glVertex3fv(vertex)
                 glNormal3fv(normal)
                 glTexCoord2fv(texture)
+                glVertex3fv(vertex)
 
             glEnd()
-        glDisable(GL_TEXTURE_2D)
         glEndList()
+
+        return polygon_list_id

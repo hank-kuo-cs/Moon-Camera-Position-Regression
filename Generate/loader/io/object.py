@@ -37,7 +37,11 @@ class ObjectEncoder:
 
     @staticmethod
     def float_str_to_float_list(vec_str: str) -> list:
-        return list(map(lambda x: float(x), vec_str.split()))
+        vector = list(map(lambda x: float(x), vec_str.split()))
+        if len(vector) == 3:
+            vector = [vector[0], vector[2], vector[1]]
+
+        return vector
 
     @staticmethod
     def face_str_to_face_list(face_vec: str) -> MoonFaceQuadMesh:
