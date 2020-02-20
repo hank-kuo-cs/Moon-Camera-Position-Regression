@@ -1,6 +1,6 @@
 # from config import OBJECT_PATH, MATERIAL_PATH, TEXTURE_PATH
 from config import *
-from loader.moon import Moon
+from model import Moon
 from loader.io import ObjectEncoder, MaterialEncoder, TextureEncoder, LightEncoder, ViewEncoder
 
 

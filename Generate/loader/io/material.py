@@ -1,5 +1,5 @@
 import re
-from loader.model import MoonMaterial
+from model import MoonMaterial
 
 
 class MaterialEncoder:

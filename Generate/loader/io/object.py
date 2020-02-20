@@ -1,5 +1,5 @@
 import re
-from loader.model import MoonObject, MoonFaceQuadMesh
+from model import MoonObject, MoonFaceQuadMesh
 
 
 class ObjectEncoder:

@@ -1,4 +1,8 @@
-from loader.model import MoonObject, MoonMaterial, MoonTexture, MoonView, MoonLight
+from model.light import MoonLight
+from model.material import MoonMaterial
+from model.object import MoonObject
+from model.texture import MoonTexture
+from model.view import MoonView
 
 
 class Moon:

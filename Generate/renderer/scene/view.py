@@ -1,11 +1,11 @@
-import numpy as np
-from loader.model import MoonView
+from model import MoonView, Cardassian3DPoint
 from renderer.scene.lib import *
 
 
 class ViewSetting:
     def __init__(self, view: MoonView):
         self.view = view
+        self.check_point_type()
 
     def set_view(self):
         self.set_projection()
@@ -24,42 +24,13 @@ class ViewSetting:
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-        self.transform_view_to_xyz()
+        eye = self.view.eye.to_list()
+        at = self.view.at.to_list()
+        up = self.view.up.to_list()
 
-        gluLookAt(*self.view.eye, *self.view.at, *self.view.up)
+        gluLookAt(*eye, *at, *up)
 
-    def transform_view_to_xyz(self):
-        self.view.eye = self.spherical_coordinate_to_xyz_coordinate(self.view.eye)
-        self.view.at = self.spherical_coordinate_to_xyz_coordinate(self.view.at)
-
-        self.calculate_up_vec()
-
-    def calculate_up_vec(self):
-        eye_vec = np.array(self.view.eye)
-        at_vec = np.array(self.view.at)
-
-        up_vec = np.cross(at_vec-eye_vec, self.view.up)
-        up_vec = np.cross(up_vec, at_vec-eye_vec)
-
-        self.view.up = self.normalize_vector(up_vec)
-
-    @staticmethod
-    def spherical_coordinate_to_xyz_coordinate(sc_vec):
-        x = sc_vec[0] * np.sin(sc_vec[1]) * np.cos(sc_vec[2])
-        y = sc_vec[0] * np.sin(sc_vec[1]) * np.sin(sc_vec[2])
-        z = sc_vec[0] * np.cos(sc_vec[1])
-
-        return [x, y, z]
-
-    @staticmethod
-    def get_vec_length(vec):
-        length = np.linalg.norm(vec)
-
-        return length if length > 0 else 1
-
-    @staticmethod
-    def normalize_vector(vec):
-        length = ViewSetting.get_vec_length(vec)
-        vec = vec / length
-
-        return vec.tolist() if type(vec) == np.ndarray else vec
+    def check_point_type(self):
+        assert isinstance(self.view.eye, Cardassian3DPoint)
+        assert isinstance(self.view.at, Cardassian3DPoint)
+        assert isinstance(self.view.up, Cardassian3DPoint)

@@ -1,4 +1,4 @@
-from loader.model import MoonTexture
+from model import MoonTexture
 from renderer.material.lib import *
 
 

@@ -1,4 +1,4 @@
-from loader.moon import Moon
+from model import Moon
 from renderer.material.lib import *
 
 

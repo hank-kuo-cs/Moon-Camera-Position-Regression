@@ -6,10 +6,7 @@ class MoonObject:
         self.faces = []
 
     def check_parameters(self):
-        assert len(self.vertices) == 4
-        assert len(self.tex_vertices) == 4
-        assert len(self.normals) == 4
-        assert len(self.faces) == 4
+        assert len(self.vertices) == len(self.normals)
 
 
 class MoonFaceQuadMesh:

@@ -1,5 +1,5 @@
 from renderer.scene.lib import *
-from loader.model import MoonLight
+from model import MoonLight
 
 
 class LightSetting:
