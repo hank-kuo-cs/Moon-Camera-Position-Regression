@@ -1,9 +1,16 @@
 import numpy as np
+from model.vector import Cartesian3DVector
 
 
 class Spherical3DPoint:
     def __init__(self, gamma: float = 0.0, theta: float = 0.0, phi: float = 0.0):
         self._point = np.array([gamma, theta, phi], dtype=np.float)
+        self.adjust_theta()
+        self.adjust_phi()
+        self.check_parameters()
+
+    def __repr__(self):
+        return str(self._point)
 
     @property
     def gamma(self):
@@ -22,6 +29,7 @@ class Spherical3DPoint:
     def theta(self, new_theta):
         self._check_theta(new_theta)
         self._point[1] = new_theta
+        self.adjust_theta()
 
     @property
     def phi(self):
@@ -31,6 +39,13 @@ class Spherical3DPoint:
     def phi(self, new_phi):
         self._check_phi(new_phi)
         self._point[2] = new_phi
+        self.adjust_phi()
+
+    def adjust_theta(self):
+        self._point[1] %= np.pi
+
+    def adjust_phi(self):
+        self._point[2] %= 2 * np.pi
 
     def to_list(self):
         return self._point.tolist()
@@ -52,15 +67,15 @@ class Spherical3DPoint:
     @staticmethod
     def _check_theta(theta):
         assert isinstance(theta, float)
-        assert 0 <= theta <= np.pi * 2
+        assert 0 <= theta <= np.pi
 
     @staticmethod
     def _check_phi(phi):
         assert isinstance(phi, float)
-        assert 0 <= phi <= np.pi
+        assert 0 <= phi <= 2 * np.pi
 
 
-class Cardassian3DPoint:
+class Cartesian3DPoint:
     def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0):
         self._point = np.array([x, y, z], dtype=np.float)
 
@@ -95,20 +110,45 @@ class Cardassian3DPoint:
     def length_with_origin(self):
         return np.linalg.norm(self._point)
 
+    def __neg__(self):
+        return Cartesian3DPoint(x=-self.x, y=-self.y, z=self.z)
+
+    def __add__(self, other):
+        assert isinstance(other, Cartesian3DVector)
+        return Cartesian3DPoint(x=self.x + other.x, y=self.y + other.y, z=self.z + other.z)
+
+    def __sub__(self, other):
+        if isinstance(other, Cartesian3DPoint):
+            return Cartesian3DVector(x=self.x - other.x, y=self.y - other.y, z=self.z - other.z)
+        elif isinstance(other, Cartesian3DVector):
+            return self.__add__(-other)
+        else:
+            raise TypeError('The subtracted object must be Cardassian3DPoint or Cardassian3DVector')
+
+    def __rsub__(self, other):
+        assert isinstance(other, Cartesian3DPoint)
+        return -self.__sub__(other)
+
+    def __repr__(self):
+        return str(self._point)
+
     @staticmethod
     def from_spherical_point(sph_point: Spherical3DPoint):
         x = sph_point.gamma * np.sin(sph_point.theta) * np.cos(sph_point.phi)
         y = sph_point.gamma * np.sin(sph_point.theta) * np.sin(sph_point.phi)
         z = sph_point.gamma * np.cos(sph_point.theta)
 
-        return Cardassian3DPoint(x=x, y=y, z=z)
+        return Cartesian3DPoint(x=x, y=y, z=z)
 
     def to_list(self):
         return self._point.tolist()
 
+    def to_numpy(self):
+        return self._point
+
     @staticmethod
     def from_list(point_list):
-        return Cardassian3DPoint(x=point_list[0], y=point_list[1], z=point_list[2])
+        return Cartesian3DPoint(x=point_list[0], y=point_list[1], z=point_list[2])
 
     def check_parameters(self):
         self._check_x(self.x)
