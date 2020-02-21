@@ -1,10 +1,15 @@
 import numpy as np
-from model.point import Spherical3DPoint, Cardassian3DPoint
 
 
-class Cardassian3DVector:
+class Cartesian3DVector:
     def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0):
         self._vec = np.array([x, y, z], dtype=np.float)
+
+    def __neg__(self):
+        self._vec = -self._vec
+
+    def __repr__(self):
+        return str(self._vec)
 
     @property
     def x(self):
@@ -37,12 +42,23 @@ class Cardassian3DVector:
     def length(self):
         return np.linalg.norm(self._vec)
 
-    def normalize(self):
-        if not self.length:
-            raise ValueError('Vector length is 0, cannot be normalized!')
+    def to_list(self):
+        return self._vec.tolist()
 
-        self._vec = self._vec / self.length
-        return Cardassian3DVector(x=self.x, y=self.y, z=self.z)
+    def to_numpy(self):
+        return self._vec
+
+    @staticmethod
+    def from_numpy(np_vec):
+        assert len(np_vec) == 3
+
+        return Cartesian3DVector(x=np_vec[0], y=np_vec[1], z=np_vec[2])
+
+    def normalize(self):
+        if self.length:
+            self._vec = self._vec / self.length
+
+        return Cartesian3DVector(x=self.x, y=self.y, z=self.z)
 
     def check_parameters(self):
         assert isinstance(self._vec, np.ndarray)

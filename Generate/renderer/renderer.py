@@ -21,13 +21,19 @@ class Renderer:
         pygame.init()
         self.surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
 
-    def set_light(self):
+    def set_light(self, moon_light=None):
+        if moon_light:
+            self.moon.light = moon_light
+
         self.check_window_state()
         self.setting_state['light'] = True
 
         LightSetting(self.moon.light).set_light()
 
-    def set_view(self):
+    def set_view(self, moon_view=None):
+        if moon_view:
+            self.moon.view = moon_view
+
         self.check_window_state()
         self.setting_state['view'] = True
 

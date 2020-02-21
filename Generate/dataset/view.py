@@ -1,108 +1,101 @@
 import numpy as np
-from copy import deepcopy
-from config import VIEW, GAMMA_RANGE, MOON_AVG_RADIUS_IN_GL_UNIT, GL_UNIT_TO_KM
+from loader import load_view
+from model import Cartesian3DPoint, Spherical3DPoint, MoonView, Cartesian3DVector
+from config import GAMMA_RANGE, MOON_AVG_RADIUS_IN_GL_UNIT, KM_TO_GL_UNIT, IS_CHANGE_EYE, IS_CHANGE_UP, IS_CHANGE_AT
 
 
 class RandomViewGenerator:
     def __init__(self):
-        self.gamma_range = [0, 0]  # OpenGL Unit
-        self.view = deepcopy(VIEW)
-        self.label = {'dist': 0.0, 'eye': [0.0, 0.0, 0.0], 'at': [0.0, 0.0, 0.0], 'up': [0.0, 0.0, 0.0]}
-        self.set_gamma_range()
+        self.moon_view = load_view()
+        self.spherical_eye = None
 
-    def set_gamma_range(self):
-        gamma_range_in_km = GAMMA_RANGE
-        self.gamma_range = [MOON_RADIUS_IN_GL_UNIT, MOON_RADIUS_IN_GL_UNIT]
+    def get_moon_view(self) -> MoonView:
+        self.set_eye()
+        self.set_at()
+        self.set_up()
 
-        for i in range(2):
-            self.gamma_range[i] += gamma_range_in_km[i] / GL_UNIT_TO_KM
+        return self.moon_view
 
-    def get_eye(self):
-        gamma = random.uniform(self.gamma_range[0], self.gamma_range[1])
+    def set_eye(self):
+        if IS_CHANGE_EYE:
+            self.moon_view.eye = self.get_random_eye()
+
+    def set_at(self):
+        if IS_CHANGE_AT:
+            self.moon_view.at - self.get_random_at()
+
+    def set_up(self):
+        if IS_CHANGE_UP:
+            self.moon_view.up = self.get_random_up()
+
+    def get_random_eye(self):
+        gamma_gl_range = [MOON_AVG_RADIUS_IN_GL_UNIT + GAMMA_RANGE[i] * KM_TO_GL_UNIT for i in range(2)]
+
+        gamma = np.random.uniform(low=gamma_gl_range[0], high=gamma_gl_range[1])
         theta = self.get_random_theta()
         phi = self.get_random_phi()
 
-        eye = [gamma, theta, phi]
+        self.spherical_eye = Spherical3DPoint(gamma=gamma, theta=theta, phi=phi)
+        eye = Cartesian3DPoint.from_spherical_point(self.spherical_eye)
 
         return eye
 
-    def get_at(self):
-        gamma = 0
+    def get_random_at(self):
+        gamma_gl_range = [0.0, 0.5 * MOON_AVG_RADIUS_IN_GL_UNIT]
+
+        gamma = np.random.uniform(low=gamma_gl_range[0], high=gamma_gl_range[1])
         theta = self.get_random_theta()
         phi = self.get_random_phi()
 
-        at = [gamma, theta, phi]
+        at = Spherical3DPoint(gamma=gamma, theta=theta, phi=phi)
+        at = Cartesian3DPoint.from_spherical_point(at)
+        at = self.normalize_at(at)
 
-    def transform_view_to_xyz(self):
-        self.view.eye = self.spherical_coordinate_to_xyz_coordinate(self.view.eye)
-        self.view.at = self.spherical_coordinate_to_xyz_coordinate(self.view.at)
+        return at
 
-        self.calculate_up_vec()
+    def get_random_up(self):
+        while True:
+            up_vec = np.random.uniform(0, 1, 3)
+            up = self.normalize_up(up_vec)
 
-    def calculate_up_vec(self):
-        eye_vec = np.array(self.view.eye)
-        at_vec = np.array(self.view.at)
+            if up != self.moon_view.eye:
+                break
 
-        up_vec = np.cross(at_vec-eye_vec, self.view.up)
-        up_vec = np.cross(up_vec, at_vec-eye_vec)
+        return up
 
-        self.view.up = self.normalize_vector(up_vec)
+    def normalize_at(self, at) -> Cartesian3DPoint:
+        assert isinstance(at, Cartesian3DPoint)
+        eye = self.moon_view.eye
+
+        at_vec = at - eye
+        at_vec = at_vec.normalize()
+
+        return eye + at_vec
+
+    def normalize_up(self, up_vec: np.ndarray):
+        assert isinstance(up_vec, np.ndarray)
+        at_vec = self.moon_view.at - self.moon_view.eye
+        at_vec = at_vec.to_numpy()
+
+        up_vec = np.cross(at_vec, up_vec)
+        up_vec = np.cross(up_vec, at_vec)
+        up_vec = Cartesian3DVector.from_numpy(up_vec)
+        up_vec = up_vec.normalize()
+
+        return self.moon_view.eye + up_vec
 
     @staticmethod
-    def spherical_coordinate_to_xyz_coordinate(sc_vec):
-        x = sc_vec[0] * np.sin(sc_vec[1]) * np.cos(sc_vec[2])
-        y = sc_vec[0] * np.sin(sc_vec[1]) * np.sin(sc_vec[2])
-        z = sc_vec[0] * np.cos(sc_vec[1])
-
-        return [x, y, z]
-
-    @staticmethod
-    def get_vec_length(vec):
+    def normalize_vector(vec: np.ndarray):
+        assert isinstance(vec, np.ndarray)
         length = np.linalg.norm(vec)
-
-        return length if length > 0 else 1
-
-    @staticmethod
-    def normalize_vector(vec):
-        length = ViewSetting.get_vec_length(vec)
-        vec = vec / length
+        vec = vec / length if length > 0 else vec
 
         return vec.tolist() if type(vec) == np.ndarray else vec
 
-
-
-
-
     @staticmethod
     def get_random_theta():
-        return math.acos(1 - 2 * random.uniform(0, 1))
+        return np.arccos(1 - 2 * np.random.uniform(0, 1))
 
     @staticmethod
     def get_random_phi():
-        return 2 * math.pi * random.uniform(0, 1)
-
-
-    def get_label(self):
-        pass
-
-    def set_view(self, view: dict):
-        for key, value in view.items():
-            if key not in self.view:
-                raise KeyError('View do not have key "%s"' % key)
-            self.view[key] = value
-
-    def set_eye(self, eye: list):
-        if len(eye) != 3:
-            raise ValueError('eye need to be 3 arguments')
-        self.view['eye'] = eye
-
-    def set_at(self, at: list):
-        if len(at) != 3:
-            raise ValueError('at need to be 3 arguments')
-        self.view['at'] = at
-
-    def set_up(self, up: list):
-        if len(up) != 3:
-            raise ValueError('up need to be 3 arguments')
-        self.view['up'] = up
-
+        return 2 * np.pi * np.random.uniform(0, 1)

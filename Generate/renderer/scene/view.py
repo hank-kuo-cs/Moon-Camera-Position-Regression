@@ -1,4 +1,4 @@
-from model import MoonView, Cardassian3DPoint
+from model import MoonView, Cartesian3DPoint
 from renderer.scene.lib import *
 
 
@@ -31,6 +31,6 @@ class ViewSetting:
         gluLookAt(*eye, *at, *up)
 
     def check_point_type(self):
-        assert isinstance(self.view.eye, Cardassian3DPoint)
-        assert isinstance(self.view.at, Cardassian3DPoint)
-        assert isinstance(self.view.up, Cardassian3DPoint)
+        assert isinstance(self.view.eye, Cartesian3DPoint)
+        assert isinstance(self.view.at, Cartesian3DPoint)
+        assert isinstance(self.view.up, Cartesian3DPoint)
