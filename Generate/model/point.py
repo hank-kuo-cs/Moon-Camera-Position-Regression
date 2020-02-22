@@ -114,8 +114,9 @@ class Cartesian3DPoint:
         return Cartesian3DPoint(x=-self.x, y=-self.y, z=self.z)
 
     def __add__(self, other):
-        assert isinstance(other, Cartesian3DVector)
-        return Cartesian3DPoint(x=self.x + other.x, y=self.y + other.y, z=self.z + other.z)
+        if isinstance(other, Cartesian3DVector):
+            return Cartesian3DPoint(x=self.x + other.x, y=self.y + other.y, z=self.z + other.z)
+        return Cartesian3DPoint(x=self.x + other, y=self.y + other, z=self.z + other)
 
     def __sub__(self, other):
         if isinstance(other, Cartesian3DPoint):
@@ -125,9 +126,16 @@ class Cartesian3DPoint:
         else:
             raise TypeError('The subtracted object must be Cardassian3DPoint or Cardassian3DVector')
 
+    def __mul__(self, other):
+        point = self._point * other
+        return Cartesian3DPoint.from_list(point.tolist())
+
     def __rsub__(self, other):
         assert isinstance(other, Cartesian3DPoint)
         return -self.__sub__(other)
+
+    def __rm(self, other):
+        return Cartesian3DPoint(x=self.x * other, y=self.y * other, z=self.z * other)
 
     def __repr__(self):
         return str(self._point)
