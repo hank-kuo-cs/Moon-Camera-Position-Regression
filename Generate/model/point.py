@@ -134,7 +134,7 @@ class Cartesian3DPoint:
         assert isinstance(other, Cartesian3DPoint)
         return -self.__sub__(other)
 
-    def __rm(self, other):
+    def __rmul__(self, other):
         return Cartesian3DPoint(x=self.x * other, y=self.y * other, z=self.z * other)
 
     def __repr__(self):

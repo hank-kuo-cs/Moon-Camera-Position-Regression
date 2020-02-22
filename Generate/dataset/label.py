@@ -9,6 +9,7 @@ class LabelGenerator:
         self.view = None
         self.spherical_eye = None
         self.vertices = np.array(vertices)
+
         self.label = {'dist': 0.0,      # km
                       'c_theta': 0.0,   # rad
                       'c_phi': 0.0,     # rad
@@ -39,6 +40,8 @@ class LabelGenerator:
 
         dist_with_moon_surface = np.dot(nearest_vertex - eye, -eye) / np.linalg.norm(eye)
         self.label['dist'] = dist_with_moon_surface * GL_UNIT_TO_KM
+
+        return self.label
 
     def set_c(self):
         self.label['c_theta'] = self.spherical_eye.theta
