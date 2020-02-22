@@ -42,7 +42,7 @@ class LabelGenerator:
         self.label['c_phi'] = self.spherical_eye.phi
 
     def set_p(self):
-        self.label['p_xyz'] = self.view.at.to_list() * GL_UNIT_TO_KM
+        self.label['p_xyz'] = (self.view.at * GL_UNIT_TO_KM).to_list()
 
     def set_u(self):
-        self.label['u_xyz'] = self.view.up.to_list() * GL_UNIT_TO_KM
+        self.label['u_xyz'] = (self.view.up * GL_UNIT_TO_KM).to_list()
