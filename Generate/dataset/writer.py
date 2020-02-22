@@ -1,7 +1,6 @@
 import os
 import cv2
 import json
-import logging
 import numpy as np
 from config import DATASET_PATH, WINDOW_HEIGHT, WINDOW_WIDTH, DATA_NUM
 from model import Moon

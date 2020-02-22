@@ -22,7 +22,7 @@ class RandomViewGenerator:
 
     def set_at(self):
         if IS_CHANGE_AT:
-            self.moon_view.at - self.get_random_at()
+            self.moon_view.at = self.get_random_at()
 
     def set_up(self):
         if IS_CHANGE_UP:

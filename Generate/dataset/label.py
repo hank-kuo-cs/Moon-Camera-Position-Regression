@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 from model import MoonView, Spherical3DPoint
 from config import GL_UNIT_TO_KM
 
@@ -24,7 +25,9 @@ class LabelGenerator:
         self.set_p()
         self.set_u()
 
-        return self.label
+        label = deepcopy(self.label)
+
+        return label
 
     def set_distance(self):
         eye = self.view.eye.to_numpy()
