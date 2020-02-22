@@ -1,37 +1,34 @@
-from loader.io import ObjectEncoder, MaterialEncoder, TextureEncoder
-from config import *
+import logging
+from loader import load_object, load_texture, load_material, load_view, load_light
+from model import Moon
 
 
-def load_obj():
-    logging.info('Load moon object')
-    object_encoder = ObjectEncoder(OBJECT_PATH)
-    moon_obj = object_encoder.load_object()
+def load_moon() -> Moon:
+    moon_obj = load_object()
     moon_obj.check_parameters()
 
+    moon_mtl = load_material()
+    moon_mtl.check_parameters()
 
-def load_mtl():
-    logging.info('Load moon material')
-    material_encoder = MaterialEncoder(MATERIAL_PATH)
-    moon_material = material_encoder.load_material()
-    moon_material.check_parameters()
-
-
-def load_texture():
-    logging.info('Load moon texture')
-    texture_encoder = TextureEncoder(TEXTURE_PATH)
-    moon_texture = texture_encoder.load_texture()
+    moon_texture = load_texture()
     moon_texture.check_parameters()
 
+    moon_light = load_light()
+    moon_light.check_parameters()
 
-def load_moon():
-    load_obj()
-    load_mtl()
-    load_texture()
+    moon_view = load_view()
+    moon_view.check_parameters()
+
+    return Moon(obj=moon_obj,
+                mtl=moon_mtl,
+                texture=moon_texture,
+                light=moon_light,
+                view=moon_view)
 
 
 if __name__ == '__main__':
-    logging.info('Check loading data...')
-    load_moon()
-    logging.info('Load data success')
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%m-%d %H:%M:%S')
 
-    print()
+    logging.info('Check loading data...')
+    moon = load_moon()
+    moon.check_parameters()

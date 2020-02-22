@@ -1,7 +1,6 @@
 import os
 import cv2
 import json
-import logging
 import numpy as np
 from config import DATASET_PATH, WINDOW_HEIGHT, WINDOW_WIDTH, DATA_NUM
 from model import Moon
@@ -90,9 +89,9 @@ class DatasetWriter:
         self.labels.append(label)
 
     def _export_label_to_json(self):
-        if self.now_label_subset_num == 9:  # test
+        if self.now_label_subset_num == 9:
             label_path = os.path.join(self.dataset_path, 'test/label', '0.json')
-        elif self.now_label_subset_num == 10: # validation
+        elif self.now_label_subset_num == 10:
             label_path = os.path.join(self.dataset_path, 'validation/label', '0.json')
         else:
             label_path = os.path.join(self.dataset_path, 'train/label', '%d.json' % (self.now_label_subset_num-1))
