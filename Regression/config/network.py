@@ -19,8 +19,7 @@ class NetworkConfig:
 
     @property
     def network_model(self):
-        network_models = {'VGG19': VGG19, 'Resnet18': Resnet18}
-        return network_models[self._network_model]
+        return self._network_model
 
     @property
     def epoch_num(self):
@@ -44,6 +43,3 @@ class NetworkConfig:
         assert isinstance(self._epoch_num, int)
         assert isinstance(self._learning_rate, float)
         assert isinstance(self._momentum, float)
-
-        networks = ['VGG19', 'Resnet18', 'Resnet50', 'Densenet']
-        assert self._network_model in networks

@@ -44,6 +44,10 @@ class CudaConfig:
         assert new_cuda_device_number < self._cuda_num
         self._cuda_device_number = new_cuda_device_number
 
+    @property
+    def parallel_gpus(self):
+        return self._parallel_gpus
+
     def check_parameters(self):
         assert self.device == 'cuda' or 'cpu'
         assert isinstance(self.is_parallel, bool)

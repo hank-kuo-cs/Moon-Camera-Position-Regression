@@ -40,3 +40,18 @@ class Config:
                     'network': self.network.__dict__,
                     'tensorboard': self.tensorboard.__dict__}
             f.write(json.dumps(data))
+
+    def print_config(self):
+        data = {'cuda': self.cuda.__dict__,
+                'dataset': self.dataset.__dict__,
+                'network': self.network.__dict__,
+                'tensorboard': self.tensorboard.__dict__}
+
+        for k1, v1 in data.items():
+            print(k1)
+            for k2, v2 in v1.items():
+                print('\t{0}: {1}'.format(k2, v2))
+            print()
+
+
+config = Config()
