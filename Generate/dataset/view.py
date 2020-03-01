@@ -1,7 +1,7 @@
 import numpy as np
 from loader import load_view
 from model import Cartesian3DPoint, Spherical3DPoint, MoonView, Cartesian3DVector
-from config import GAMMA_RANGE, MOON_AVG_RADIUS_IN_GL_UNIT, KM_TO_GL_UNIT, IS_CHANGE_EYE, IS_CHANGE_UP, IS_CHANGE_AT
+from config import GAMMA_RANGE, MOON_MAX_RADIUS_IN_GL_UNIT, KM_TO_GL_UNIT, IS_CHANGE_EYE, IS_CHANGE_UP, IS_CHANGE_AT
 
 
 class RandomViewGenerator:
@@ -29,7 +29,7 @@ class RandomViewGenerator:
             self.moon_view.up = self.get_random_up()
 
     def get_random_eye(self):
-        gamma_gl_range = [MOON_AVG_RADIUS_IN_GL_UNIT + GAMMA_RANGE[i] * KM_TO_GL_UNIT for i in range(2)]
+        gamma_gl_range = [MOON_MAX_RADIUS_IN_GL_UNIT + GAMMA_RANGE[i] * KM_TO_GL_UNIT for i in range(2)]
 
         gamma = np.random.uniform(low=gamma_gl_range[0], high=gamma_gl_range[1])
         theta = self.get_random_theta()
@@ -41,7 +41,7 @@ class RandomViewGenerator:
         return eye
 
     def get_random_at(self):
-        gamma_gl_range = [0.0, 0.5 * MOON_AVG_RADIUS_IN_GL_UNIT]
+        gamma_gl_range = [0.0, 0.5 * MOON_MAX_RADIUS_IN_GL_UNIT]
 
         gamma = np.random.uniform(low=gamma_gl_range[0], high=gamma_gl_range[1])
         theta = self.get_random_theta()

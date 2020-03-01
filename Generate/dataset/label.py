@@ -37,8 +37,11 @@ class LabelGenerator:
         nearest_vertex_idx = np.argmin(dist_with_vertices)
 
         nearest_vertex = self.vertices[nearest_vertex_idx]
+        v1 = nearest_vertex - eye
+        v2 = -eye
 
-        dist_with_moon_surface = np.dot(nearest_vertex - eye, -eye) / np.linalg.norm(eye)
+        dist_with_moon_surface = self.get_project_vector_length(v1, v2)
+
         self.label['dist'] = dist_with_moon_surface * GL_UNIT_TO_KM
 
         return self.label
@@ -52,3 +55,10 @@ class LabelGenerator:
 
     def set_u(self):
         self.label['u_xyz'] = (self.view.up * GL_UNIT_TO_KM).to_list()
+
+    @staticmethod
+    def get_project_vector_length(v1, v2):
+        assert isinstance(v1, np.ndarray) and isinstance(v2, np.ndarray)
+        assert v1.shape == (3,) and v2.shape == (3,)
+
+        return np.linalg.norm(np.dot(v1, v2) / np.linalg.norm(v2) * v2 / np.linalg.norm(v2))
