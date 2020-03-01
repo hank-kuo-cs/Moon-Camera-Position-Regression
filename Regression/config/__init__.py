@@ -16,7 +16,8 @@ class Config:
         self.dataset = DatasetConfig(dataset_path='../Dataset',
                                      labels=['dist', 'c_theta', 'c_phi'],
                                      dataset_size={'train': 8000, 'test': 1000, 'validation': 1000},
-                                     sub_dataset_size=1000)
+                                     sub_dataset_size=1000,
+                                     dist_range=80.0)
 
         self.network = NetworkConfig(network_model='VGG19',
                                      batch_size=20,

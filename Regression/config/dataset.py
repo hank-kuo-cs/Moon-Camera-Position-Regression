@@ -3,15 +3,21 @@ class DatasetConfig:
                  dataset_path: str,
                  labels: list,
                  dataset_size: dict,
-                 sub_dataset_size: int):
+                 sub_dataset_size: int,
+                 dist_range: float):
 
         self._dataset_path = dataset_path
         self._labels = labels
         self._dataset_size = dataset_size
         self._sub_dataset_size = sub_dataset_size
         self._dataset_type = ['train', 'test', 'validation']
+        self._dist_range = dist_range   # km
 
         self.check_parameters()
+
+    @property
+    def dataset_path(self) -> str:
+        return self._dataset_path
 
     @property
     def train_dataset_num(self) -> int:
@@ -29,11 +35,20 @@ class DatasetConfig:
     def dataset_num(self) -> int:
         return self.train_dataset_num + self.test_dataset_num + self.validation_dataset_num
 
+    @property
+    def dist_range(self):
+        return self._dist_range
+
+    @property
+    def labels(self):
+        return self._labels
+
     def check_parameters(self):
         assert isinstance(self._dataset_path, str)
         assert isinstance(self._labels, list)
         assert isinstance(self._dataset_size, dict)
         assert isinstance(self._sub_dataset_size, int)
+        assert isinstance(self._dist_range, float)
 
         labels = ['dist', 'c_theta', 'c_phi', 'p_xyz', 'u_xyz']
 

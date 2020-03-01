@@ -13,17 +13,25 @@ from config import config
 
 class Trainer:
     def __init__(self, args, data_loader):
-        self.args = args
+        self._is_scratch = False
+        self._pretrain_model_path = ''
+        self.set_arguments(args)
+
         self.network = None
         self.model = None
         self.data_loader = data_loader
 
-    def run(self):
+    def train(self):
         self.set_model()
         self.set_network()
 
         for i in range(config.network.epoch_num):
+            logging.info('Start training epoch %d' % (i+1))
             self.network.run_one_epoch()
+
+    def set_arguments(self, args):
+        self._is_scratch = args.scratch
+        self._pretrain_model_path = args.pretrain_model
 
     def set_network(self):
         self.network = Network(config=config,
@@ -50,7 +58,7 @@ class Trainer:
         self.model = self.model.to(config.cuda.device)
 
     def set_model_pretrain(self):
-        if self.args.pretrain_model and self.args.scratch:
+        if self._pretrain_model_path and self._is_scratch:
             raise ValueError('Cannot use both argument \'pretrain_model\' and \'scratch\'!')
 
         model_path = self.get_pretrain_model_path()
@@ -58,7 +66,7 @@ class Trainer:
             self.model.load_state_dict(torch.load(model_path))
 
     def get_pretrain_model_path(self):
-        model_path = self.args.pretrain_model
+        model_path = self._pretrain_model_path
 
         if not model_path:
             pretrain_model_paths = glob('./checkpoint/model*')
@@ -98,4 +106,4 @@ if __name__ == '__main__':
                                    num_workers=4)
 
     trainer = Trainer(args=arguments, data_loader=train_data_loader)
-    trainer.run()
+    trainer.train()
