@@ -1,53 +1,35 @@
 import os
+import time
 import torch
+import logging
+import numpy as np
+from config import config
 
 
 class Network:
-    def __init__(self, config, model, loss_func, optimizer, tensorboard_writer, data_loader, is_train: bool = True, epoch: int = 1):
-        self._config = config
+    def __init__(self, model, data_loader, loss_func=None, optimizer=None, tensorboard_writer=None, epoch=1):
         self._model = model
         self._loss_func = loss_func
         self._optimizer = optimizer
         self._tensorboard_writer = tensorboard_writer
         self._data_loader = data_loader
-        self.is_train = is_train
-        self.epoch = epoch
+        self._epoch = epoch
 
         self._features = None
 
     def run_one_epoch(self):
-        for idx, (inputs, labels) in enumerate(self.get_data()):
-            if self.is_train:
-                self.optimizer.zero_grad()
-
-            outputs = self.model(inputs)
-
-            loss = self.loss_func(outputs, labels)
-
-            if self.is_train:
-                loss.backward()
-                self.optimizer.step()
-
-            self.tensorboard.add_loss(loss.item())
-
-        self.epoch += 1
+        pass
 
     def save_model(self):
         os.makedirs('checkpoint/', exist_ok=True)
-        model_path = 'checkpoint/model_epoch%.3d.pth' % self.epoch
+        model_path = 'checkpoint/model_epoch%.3d.pth' % self._epoch
         torch.save(self.model.state_dict(), model_path)
 
     def get_data(self):
         for i, data in enumerate(self._data_loader):
-            device = self.config.cuda.device
+            device = config.cuda.device
             inputs, labels = data[0].to(device), data[1].to(device)
             yield (inputs, labels)
-
-    @property
-    def config(self):
-        if self._config is None:
-            raise ValueError('Config of network is empty!')
-        return self._config
 
     @property
     def model(self):
@@ -78,3 +60,16 @@ class Network:
         if self._tensorboard_writer is None:
             raise ValueError('Tensorboard of network is empty!')
         return self._tensorboard_writer
+
+    @staticmethod
+    def tensor_to_numpy(tensor_array):
+        assert isinstance(tensor_array, torch.Tensor)
+
+        tensor_array = tensor_array.clone()
+        if tensor_array.requires_grad:
+            tensor_array = tensor_array.detach()
+        if config.cuda.device != 'cpu':
+            tensor_array = tensor_array.cpu()
+
+        numpy_array = tensor_array.numpy()
+        return numpy_array

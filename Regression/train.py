@@ -1,3 +1,4 @@
+import re
 import torch
 import logging
 import argparse
@@ -6,15 +7,16 @@ from torch.utils.data import DataLoader
 
 from data import MoonDataset
 from loss import MoonLoss
-from network import Network, Resnet18, VGG19
+from network import TrainNetwork, Resnet18, VGG19
 from tensorboard import TensorboardWriter
 from config import config
 
 
-class Trainer:
+class Training:
     def __init__(self, args, data_loader):
         self._is_scratch = False
         self._pretrain_model_path = ''
+        self._epoch = 1
         self.set_arguments(args)
 
         self.network = None
@@ -25,7 +27,7 @@ class Trainer:
         self.set_model()
         self.set_network()
 
-        for i in range(config.network.epoch_num):
+        for i in range(self._epoch - 1, config.network.epoch_num):
             logging.info('Start training epoch %d' % (i+1))
             self.network.run_one_epoch()
 
@@ -34,16 +36,17 @@ class Trainer:
         self._pretrain_model_path = args.pretrain_model
 
     def set_network(self):
-        self.network = Network(config=config,
-                               model=self.model,
-                               loss_func=self.loss_func,
-                               optimizer=self.optimizer,
-                               tensorboard_writer=self.tensorboard_writer,
-                               data_loader=self.data_loader)
+        self.network = TrainNetwork(model=self.model,
+                                    data_loader=self.data_loader,
+                                    loss_func=self.loss_func,
+                                    optimizer=self.optimizer,
+                                    tensorboard_writer=self.tensorboard_writer,
+                                    epoch=self._epoch)
 
     def set_model(self):
+        image_size = self.data_loader.dataset[0][0].size()[1]
         models = {'VGG19': VGG19, 'Resnet18': Resnet18}
-        self.model = models[config.network.network_model]
+        self.model = models[config.network.network_model](image_size=image_size)
 
         self.set_model_gpu()
         self.set_model_device()
@@ -62,8 +65,12 @@ class Trainer:
             raise ValueError('Cannot use both argument \'pretrain_model\' and \'scratch\'!')
 
         model_path = self.get_pretrain_model_path()
-        if model_path:
+        if model_path and not self._is_scratch:
+            self._epoch = self.get_epoch_num(model_path)
             self.model.load_state_dict(torch.load(model_path))
+            logging.info('Use pretrained model %s to continue training' % model_path)
+        else:
+            logging.info('Train from scratch')
 
     def get_pretrain_model_path(self):
         model_path = self._pretrain_model_path
@@ -73,6 +80,15 @@ class Trainer:
             model_path = sorted(pretrain_model_paths)[-1] if pretrain_model_paths else None
 
         return model_path
+
+    @staticmethod
+    def get_epoch_num(model_path: str):
+        assert isinstance(model_path, str)
+
+        epoch_num_str = re.findall(r'epoch(.+?)\.pth', model_path)
+        if epoch_num_str:
+            return int(epoch_num_str[0])
+        raise ValueError('Cannot find epoch number in the model path: %s' % model_path)
 
     @property
     def loss_func(self):
@@ -86,7 +102,7 @@ class Trainer:
 
     @property
     def tensorboard_writer(self):
-        return TensorboardWriter()
+        return TensorboardWriter(dataset_type='train', epoch=self._epoch)
 
 
 if __name__ == '__main__':
@@ -99,11 +115,11 @@ if __name__ == '__main__':
 
     arguments = parser.parse_args()
 
-    train_dataset = MoonDataset().train_dataset
+    train_dataset = MoonDataset('train')
     train_data_loader = DataLoader(dataset=train_dataset,
                                    batch_size=config.network.batch_size,
                                    shuffle=True,
                                    num_workers=4)
 
-    trainer = Trainer(args=arguments, data_loader=train_data_loader)
+    trainer = Training(args=arguments, data_loader=train_data_loader)
     trainer.train()

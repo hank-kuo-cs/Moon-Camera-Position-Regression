@@ -1,6 +1,3 @@
-from network import VGG19, Resnet18
-
-
 class NetworkConfig:
     def __init__(self,
                  network_model: str,

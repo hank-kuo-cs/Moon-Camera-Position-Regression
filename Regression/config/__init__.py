@@ -15,12 +15,13 @@ class Config:
 
         self.dataset = DatasetConfig(dataset_path='../Dataset',
                                      labels=['dist', 'c_theta', 'c_phi'],
-                                     dataset_size={'train': 8000, 'test': 1000, 'validation': 1000},
-                                     sub_dataset_size=1000,
-                                     dist_range=80.0)
+                                     dataset_size={'train': 80, 'test': 10, 'validation': 10},
+                                     sub_dataset_size=10,
+                                     dist_range=80.0,   # km
+                                     normalize_point_weight=2000.0)
 
         self.network = NetworkConfig(network_model='VGG19',
-                                     batch_size=20,
+                                     batch_size=10,
                                      epoch_num=300,
                                      learning_rate=0.001,
                                      momentum=0.9)
@@ -43,6 +44,8 @@ class Config:
             f.write(json.dumps(data))
 
     def print_config(self):
+        print('Config Setting:')
+
         data = {'cuda': self.cuda.__dict__,
                 'dataset': self.dataset.__dict__,
                 'network': self.network.__dict__,

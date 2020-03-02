@@ -138,13 +138,16 @@ class DatasetWriter:
     def check_label(label):
         assert isinstance(label, dict)
 
-        keys = ['dist', 'c_theta', 'c_phi', 'p_xyz', 'u_xyz']
+        keys = ['dist', 'c_theta', 'c_phi', 'p_x', 'p_y', 'p_z', 'u_x', 'u_y', 'u_z']
         for key in keys:
             assert key in label
 
         assert isinstance(label['dist'], float)
         assert isinstance(label['c_theta'], float)
         assert isinstance(label['c_phi'], float)
-
-        assert len(label['p_xyz']) == 3
-        assert len(label['u_xyz']) == 3
+        assert isinstance(label['p_x'], float)
+        assert isinstance(label['p_y'], float)
+        assert isinstance(label['p_z'], float)
+        assert isinstance(label['u_x'], float)
+        assert isinstance(label['u_y'], float)
+        assert isinstance(label['u_z'], float)

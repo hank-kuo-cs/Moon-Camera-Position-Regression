@@ -1,3 +1,4 @@
+import os
 import torch
 
 
@@ -15,6 +16,7 @@ class CudaConfig:
         self._cuda_num = torch.cuda.device_count()
 
         self.check_parameters()
+        self.set_cuda_device()
 
     @property
     def device(self) -> str:
@@ -48,10 +50,15 @@ class CudaConfig:
     def parallel_gpus(self):
         return self._parallel_gpus
 
+    def set_cuda_device(self):
+        if self.device == 'cuda':
+            os.environ['CUDA_VISIBLE_DEVICES'] = str(self.cuda_device_number)
+
     def check_parameters(self):
         assert self.device == 'cuda' or 'cpu'
         assert isinstance(self.is_parallel, bool)
         assert isinstance(self.cuda_device_number, int)
 
         if self.device == 'cuda':
+            assert torch.cuda.is_available()
             assert self.cuda_device_number < self._cuda_num

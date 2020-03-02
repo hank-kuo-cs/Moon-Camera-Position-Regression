@@ -40,7 +40,7 @@ KM_TO_GL_UNIT = 0.001
 
 # Dataset
 DATASET_PATH = '../Dataset'
-DATA_NUM = 100
+DATA_NUM = 10000
 GAMMA_RANGE = [0.2, 80]  # km
 IS_CHANGE_EYE = True
 IS_CHANGE_AT = True

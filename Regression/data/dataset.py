@@ -8,23 +8,10 @@ from config import config
 
 
 class MoonDataset(Dataset):
-    def __init__(self):
-        self.dataset_loader = None
-
-    @property
-    def train_dataset(self):
-        self.dataset_loader = DatasetLoader('train')
-        return self
-
-    @property
-    def test_dataset(self):
-        self.dataset_loader = DatasetLoader('test')
-        return self
-
-    @property
-    def validation_dataset(self):
-        self.dataset_loader = DatasetLoader('validation')
-        return self
+    def __init__(self, data_type: str):
+        data_types = ['train', 'test', 'validation']
+        assert data_type in data_types
+        self.dataset_loader = DatasetLoader(data_type)
 
     def __len__(self):
         assert len(self.dataset_loader.images_path) == len(self.dataset_loader.labels)
@@ -45,12 +32,14 @@ class MoonDataset(Dataset):
 
         image = self.refine_image(image)
 
+        assert isinstance(image, torch.FloatTensor)
         return image
 
     def get_label(self, item):
         label = self.dataset_loader.labels[item]
         label = self.refine_label(label)
 
+        assert isinstance(label, torch.FloatTensor)
         return label
 
     @staticmethod
@@ -65,52 +54,45 @@ class MoonDataset(Dataset):
 
         image = transform(image)
 
-        assert isinstance(image, torch.FloatTensor)
-
         return image
 
     @classmethod
     def refine_label(cls, label):
         refined_label = []
-        labels = config.dataset.labels
+        label_types = config.dataset.labels
 
-        for label_type in labels:
+        for label_type in label_types:
             value = label[label_type]
-            refined_label += cls.normalize_label(label_type, value)
+            refined_label.append(cls.normalize_label(label_type, value))
 
         label = np.array(refined_label)
         label = torch.from_numpy(label).float()
-
-        assert isinstance(label, torch.FloatTensor)
 
         return label
 
     @classmethod
     def normalize_label(cls, label_type, value):
-        if label_type == 'dist':
-            normalize_func = cls.normalize_dist
-        elif label_type == 'c_theta' or label_type == 'c_phi':
-            normalize_func = cls.normalize_angle
-        elif label_type == 'p_xyz' or label_type == 'u_xyz':
-            normalize_func = cls.normalize_vec
-        else:
-            raise ValueError('Cannot tell this label type \'%s\'' % label_type)
+        normalize_func_dict = {'dist': cls.normalize_dist,
+                               'c_theta': cls.normalize_angle,
+                               'c_phi': cls.normalize_angle,
+                               'p_x': cls.normalize_point,
+                               'p_y': cls.normalize_point,
+                               'p_z': cls.normalize_point,
+                               'u_x': cls.normalize_point,
+                               'u_y': cls.normalize_point,
+                               'u_z': cls.normalize_point}
+
+        normalize_func = normalize_func_dict[label_type]
         return normalize_func(value)
 
     @staticmethod
     def normalize_dist(dist):
-        return [dist / config.dataset.dist_range]
+        return dist / config.dataset.dist_range
 
     @staticmethod
     def normalize_angle(angle):
-        return [angle / (np.pi * 2)]
+        return angle / (np.pi * 2)
 
     @staticmethod
-    def normalize_vec(v_xyz):
-        assert isinstance(v_xyz, list)
-        assert len(v_xyz) == 3
-
-        for value in v_xyz:
-            value /= 1000
-
-        return v_xyz
+    def normalize_point(point):
+        return point / config.dataset.normalize_point_weight

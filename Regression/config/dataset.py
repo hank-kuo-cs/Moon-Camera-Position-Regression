@@ -4,14 +4,16 @@ class DatasetConfig:
                  labels: list,
                  dataset_size: dict,
                  sub_dataset_size: int,
-                 dist_range: float):
+                 dist_range: float,
+                 normalize_point_weight: float):
 
         self._dataset_path = dataset_path
         self._labels = labels
         self._dataset_size = dataset_size
         self._sub_dataset_size = sub_dataset_size
-        self._dataset_type = ['train', 'test', 'validation']
+        self._dataset_types = ['train', 'test', 'validation']
         self._dist_range = dist_range   # km
+        self._normalize_point_weight = normalize_point_weight
 
         self.check_parameters()
 
@@ -36,12 +38,27 @@ class DatasetConfig:
         return self.train_dataset_num + self.test_dataset_num + self.validation_dataset_num
 
     @property
-    def dist_range(self):
+    def dataset_types(self):
+        return self._dataset_types
+
+    @property
+    def dist_range(self) -> float:
         return self._dist_range
 
     @property
-    def labels(self):
+    def labels(self) -> list:
         return self._labels
+
+    @property
+    def normalize_point_weight(self) -> float:
+        return self._normalize_point_weight
+
+    def get_dataset_num(self, dataset_type=None) -> int:
+        if dataset_type is None:
+            return self.dataset_num
+
+        assert dataset_type in self._dataset_types
+        return self._dataset_size[dataset_type]
 
     def check_parameters(self):
         assert isinstance(self._dataset_path, str)
@@ -49,17 +66,14 @@ class DatasetConfig:
         assert isinstance(self._dataset_size, dict)
         assert isinstance(self._sub_dataset_size, int)
         assert isinstance(self._dist_range, float)
+        assert isinstance(self._normalize_point_weight, float)
 
-        labels = ['dist', 'c_theta', 'c_phi', 'p_xyz', 'u_xyz']
+        labels = ['dist', 'c_theta', 'c_phi', 'p_x', 'p_y', 'p_z', 'u_x', 'u_y', 'u_z']
 
         for l in self._labels:
             assert l in labels
 
-            if l == 'p_xyz' or l == 'u_xyz':
-                assert isinstance(self._labels[l], list)
-                assert len(self._labels[l]) == 3
-
         for k, v in self._dataset_size.items():
-            assert k in self._dataset_type
+            assert k in self._dataset_types
             assert v >= self._sub_dataset_size
             assert v % self._sub_dataset_size == 0
