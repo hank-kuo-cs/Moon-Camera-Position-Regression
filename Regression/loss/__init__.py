@@ -11,7 +11,9 @@ class MoonLoss(torch.nn.Module):
         self.predicts = None
 
     def forward(self, predicts: torch.FloatTensor, labels: torch.FloatTensor) -> torch.Tensor:
-        assert isinstance(predicts, torch.FloatTensor) and isinstance(labels, torch.FloatTensor)
+        type_check = isinstance(predicts, torch.FloatTensor) and isinstance(labels, torch.FloatTensor)
+        type_check_gpu = isinstance(predicts, torch.cuda.FloatTensor) and isinstance(labels, torch.cuda.FloatTensor)
+        assert type_check or type_check_gpu
         assert predicts.shape == labels.shape
 
         constant_loss = torch.tensor(0, dtype=torch.float)
@@ -26,7 +28,7 @@ class MoonLoss(torch.nn.Module):
 
     @staticmethod
     def transform_spherical_angle_label(predicts, labels):
-        tmp = torch.zeros((config.network.batch_size, 2), dtype=torch.float)
+        tmp = torch.zeros((config.network.batch_size, 2), dtype=torch.float).to(config.cuda.device)
 
         over_one_radius_indices = torch.abs(predicts[:, 1:3] - labels[:, 1:3]) > 0.5
 

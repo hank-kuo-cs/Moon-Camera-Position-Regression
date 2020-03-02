@@ -57,7 +57,7 @@ class TestNetwork(Network):
         if len(self.label_types) < 3:
             return
 
-        tmp = np.zeros((config.network.batch_size, 2), dtype=np.float)
+        tmp = np.zeros((config.dataset.test_dataset_num, 2), dtype=np.float)
 
         over_one_radius_indices = np.abs(self.predicts[:, 1:3] - self.labels[:, 1:3]) > 0.5
 
