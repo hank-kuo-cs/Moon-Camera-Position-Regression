@@ -15,10 +15,8 @@ def load_label(label_path, image_name):
     with open(label_path, 'r') as f:
         labels = json.load(f)
     c_gamma = labels[image_name]['spherical'][0]
-    label = [c_gamma]
-    label = np.array(label, dtype=np.double)
-
-    label[0] /= GAMMA_RADIUS + GAMMA_RANGE
+    label = np.array([0], dtype=np.double)
+    label[0] = (c_gamma - GAMMA_RADIUS) / GAMMA_RANGE
 
     return label
 
