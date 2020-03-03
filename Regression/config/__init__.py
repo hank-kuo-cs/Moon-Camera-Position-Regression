@@ -9,26 +9,26 @@ from config.tensorboard import TensorboardConfig
 class Config:
     def __init__(self):
         self.cuda = CudaConfig(device='cuda',
-                               is_parallel=True,
-                               cuda_device_number=0,
+                               is_parallel=False,
+                               cuda_device_number=2,
                                parallel_gpus=[0, 2, 3])
 
-        self.dataset = DatasetConfig(dataset_path='../Dataset',
-                                     labels=['dist', 'c_theta', 'c_phi'],
-                                     dataset_size={'train': 8000, 'test': 1000, 'validation': 1000},
-                                     sub_dataset_size=1000,
+        self.dataset = DatasetConfig(dataset_path='/data/space/Dataset_fovy120_10k',
+                                     labels=['dist'],
+                                     dataset_size={'train': 80000, 'test': 10000, 'validation': 10000},
+                                     sub_dataset_size=10000,
                                      dist_range=80.0,   # km
                                      normalize_point_weight=2000.0)
 
         self.network = NetworkConfig(network_model='VGG19',
-                                     batch_size=20,
+                                     batch_size=10,
                                      epoch_num=300,
                                      learning_rate=0.001,
                                      momentum=0.9)
 
         self.tensorboard = TensorboardConfig(tensorboard_path='../Tensorboard',
-                                             experiment_name='Experiment1',
-                                             loss_step=10,
+                                             experiment_name='E1_old_dataset_80km',
+                                             loss_step=100,
                                              tsne_epoch_step=50,
                                              is_write_loss=True,
                                              is_write_tsne=False)
