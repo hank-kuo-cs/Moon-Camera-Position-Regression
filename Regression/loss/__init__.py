@@ -23,17 +23,20 @@ class MoonLoss(torch.nn.Module):
             constant_loss = self.get_spherical_angle_constant_loss(predicts)
 
         mse_loss = MSELoss()(predicts, labels)
+        loss = torch.add(mse_loss, constant_loss)
 
-        return torch.add(mse_loss, constant_loss)
+        return mse_loss, constant_loss
 
     @staticmethod
     def transform_spherical_angle_label(predicts, labels):
         tmp = torch.zeros((config.network.batch_size, 2), dtype=torch.float).to(config.cuda.device)
 
+        predicts[:, 1: 3] = torch.remainder(predicts[:, 1: 3], 1)
+
         over_one_radius_indices = torch.abs(predicts[:, 1:3] - labels[:, 1:3]) > 0.5
 
-        tmp[over_one_radius_indices & (predicts[:, 1:3] < labels[:, 1:3])] = 1
-        tmp[over_one_radius_indices & (predicts[:, 1:3] >= labels[:, 1:3])] = -1
+        tmp[over_one_radius_indices & (labels[:, 1:3] < predicts[:, 1:3])] = 1
+        tmp[over_one_radius_indices & (labels[:, 1:3] >= predicts[:, 1:3])] = -1
 
         labels[:, 1:3] += tmp
 
