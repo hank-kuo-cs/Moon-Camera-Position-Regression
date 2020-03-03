@@ -1,6 +1,6 @@
+import os
 from tensorboardX import SummaryWriter
 from config import config
-import time
 
 
 class LossWriter:
@@ -35,7 +35,8 @@ class LossWriter:
     def add_scalar_to_tensorboard(tag: str, value: float, global_step: int):
         if not config.tensorboard.is_write_loss:
             return
-        writer = SummaryWriter(config.tensorboard.writer_path)
+        writer_path = os.path.join(config.tensorboard.tensorboard_path, config.tensorboard.experiment_name)
+        writer = SummaryWriter(writer_path)
         writer.add_scalar(tag=tag, scalar_value=value, global_step=global_step)
         writer.close()
 

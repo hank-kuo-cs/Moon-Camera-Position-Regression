@@ -26,7 +26,7 @@ class Config:
                                      learning_rate=0.001,
                                      momentum=0.9)
 
-        self.tensorboard = TensorboardConfig(writer_path='../Tensorboard',
+        self.tensorboard = TensorboardConfig(tensorboard_path='../Tensorboard',
                                              experiment_name='Experiment1',
                                              loss_step=100,
                                              tsne_epoch_step=50,
@@ -34,7 +34,7 @@ class Config:
                                              is_write_tsne=False)
 
     def export_config_to_tensorboard_dir(self):
-        file_out_path = os.path.join(self.tensorboard.writer_path, self.tensorboard.experiment_name + '_config.txt')
+        file_out_path = os.path.join(self.tensorboard.tensorboard_path, self.tensorboard.experiment_name + '_config.txt')
 
         with open(file_out_path, 'w') as f:
             data = {'cuda': self.cuda.__dict__,

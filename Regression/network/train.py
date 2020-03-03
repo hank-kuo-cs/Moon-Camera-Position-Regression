@@ -1,5 +1,6 @@
 import logging
 from network.network import Network
+from config import config
 
 
 class TrainNetwork(Network):
@@ -31,4 +32,5 @@ class TrainNetwork(Network):
         self._epoch += 1
 
     def show_step_loss(self, loss, step):
-        logging.info('%d-th epoch, %d step, loss = %.6f' % (self._epoch, step, loss))
+        if step % config.tensorboard.loss_step == 0:
+            logging.info('epoch %d, %d step, loss = %.6f' % (self._epoch, step, loss))
