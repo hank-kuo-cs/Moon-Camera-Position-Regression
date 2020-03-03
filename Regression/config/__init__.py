@@ -8,27 +8,27 @@ from config.tensorboard import TensorboardConfig
 
 class Config:
     def __init__(self):
-        self.cuda = CudaConfig(device='cpu',
-                               is_parallel=False,
+        self.cuda = CudaConfig(device='cuda',
+                               is_parallel=True,
                                cuda_device_number=0,
-                               parallel_gpus=[0, 1, 2, 3])
+                               parallel_gpus=[0, 2, 3])
 
         self.dataset = DatasetConfig(dataset_path='../Dataset',
                                      labels=['dist', 'c_theta', 'c_phi'],
-                                     dataset_size={'train': 80, 'test': 10, 'validation': 10},
-                                     sub_dataset_size=10,
+                                     dataset_size={'train': 8000, 'test': 1000, 'validation': 1000},
+                                     sub_dataset_size=1000,
                                      dist_range=80.0,   # km
                                      normalize_point_weight=2000.0)
 
         self.network = NetworkConfig(network_model='VGG19',
-                                     batch_size=10,
+                                     batch_size=20,
                                      epoch_num=300,
                                      learning_rate=0.001,
                                      momentum=0.9)
 
         self.tensorboard = TensorboardConfig(tensorboard_path='../Tensorboard',
                                              experiment_name='Experiment1',
-                                             loss_step=100,
+                                             loss_step=10,
                                              tsne_epoch_step=50,
                                              is_write_loss=True,
                                              is_write_tsne=False)
