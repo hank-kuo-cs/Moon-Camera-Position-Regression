@@ -35,6 +35,8 @@ class LossWriter:
     def add_scalar_to_tensorboard(tag: str, value: float, global_step: int):
         if not config.tensorboard.is_write_loss:
             return
+        if global_step % config.tensorboard.loss_step != 0:
+            return
         writer_path = os.path.join(config.tensorboard.tensorboard_path, config.tensorboard.experiment_name)
         writer = SummaryWriter(writer_path)
         writer.add_scalar(tag=tag, scalar_value=value, global_step=global_step)
