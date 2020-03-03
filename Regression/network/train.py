@@ -11,6 +11,7 @@ class TrainNetwork(Network):
                          optimizer=optimizer,
                          tensorboard_writer=tensorboard_writer,
                          epoch=epoch)
+        self.show_loss = 0.0
 
     def run_one_epoch(self):
         for idx, (inputs, labels) in enumerate(self.get_data()):
@@ -32,5 +33,8 @@ class TrainNetwork(Network):
         self._epoch += 1
 
     def show_step_loss(self, loss, step):
+        self.show_loss += loss
         if step % config.tensorboard.loss_step == 0:
-            logging.info('epoch %d, %d step, loss = %.6f' % (self._epoch, step, loss))
+            avg_step_loss = self.show_loss / config.tensorboard.loss_step
+            logging.info('epoch %d, %d step, loss = %.6f' % (self._epoch, step, avg_step_loss))
+            self.show_loss = 0
