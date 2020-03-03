@@ -59,10 +59,12 @@ class TestNetwork(Network):
 
         tmp = np.zeros((config.dataset.test_dataset_num, 2), dtype=np.float)
 
+        self.predicts[:, 1: 3] = np.remainder(self.predicts[:, 1: 3], 1)
+
         over_one_radius_indices = np.abs(self.predicts[:, 1:3] - self.labels[:, 1:3]) > 180
 
-        tmp[over_one_radius_indices & (self.predicts[:, 1:3] < self.labels[:, 1:3])] = 360
-        tmp[over_one_radius_indices & (self.predicts[:, 1:3] >= self.labels[:, 1:3])] = -360
+        tmp[over_one_radius_indices & (self.labels[:, 1:3] < self.predicts[:, 1:3])] = 360
+        tmp[over_one_radius_indices & (self.labels[:, 1:3] >= self.predicts[:, 1:3])] = -360
 
         self.labels[:, 1:3] += tmp
 
