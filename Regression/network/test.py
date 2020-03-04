@@ -13,6 +13,8 @@ class TestNetwork(Network):
         self.avg_loss = 0.0
 
     def run_one_epoch(self):
+        self.model.eval()
+
         for idx, (inputs, labels) in tqdm(enumerate(self.get_data())):
             predicts = self.model(inputs)
 
