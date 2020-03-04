@@ -102,7 +102,7 @@ class Training:
 
     @property
     def tensorboard_writer(self):
-        return TensorboardWriter(dataset_type='train', epoch=self._epoch)
+        return TensorboardWriter(dataset_type='train')
 
 
 if __name__ == '__main__':
