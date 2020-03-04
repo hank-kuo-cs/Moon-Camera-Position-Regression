@@ -14,6 +14,8 @@ class TrainNetwork(Network):
         self.show_loss = 0.0
 
     def run_one_epoch(self):
+        self.model.train()
+
         for idx, (inputs, labels) in enumerate(self.get_data()):
             self.optimizer.zero_grad()
 

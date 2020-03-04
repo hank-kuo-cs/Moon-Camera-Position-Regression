@@ -5,12 +5,12 @@ import argparse
 from glob import glob
 from torch.utils.data import DataLoader
 
-# from data import MoonDataset
+from data import MoonDataset
 from loss import MoonLoss
 from network import TrainNetwork, Resnet18, VGG19
 from tensorboard import TensorboardWriter
 from config import config
-from data.backup import MoonDataset
+
 
 class Training:
     def __init__(self, args, data_loader):
