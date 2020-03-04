@@ -52,6 +52,7 @@ class CudaConfig:
 
     def set_cuda_device(self):
         if self.device == 'cuda':
+            os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
             os.environ['CUDA_VISIBLE_DEVICES'] = str(self.cuda_device_number)
 
     def check_parameters(self):
@@ -61,4 +62,3 @@ class CudaConfig:
 
         if self.device == 'cuda':
             assert torch.cuda.is_available()
-            assert self.cuda_device_number < self._cuda_num
