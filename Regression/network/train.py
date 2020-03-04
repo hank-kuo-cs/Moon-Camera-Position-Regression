@@ -13,6 +13,8 @@ class TrainNetwork(Network):
                          epoch=epoch)
 
     def run_one_epoch(self):
+        self.model.train()
+
         for idx, (inputs, labels) in enumerate(self.get_data()):
             self.optimizer.zero_grad()
 
