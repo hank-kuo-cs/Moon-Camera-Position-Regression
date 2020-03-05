@@ -36,7 +36,6 @@ class TestNetwork(Network):
 
     def show_some_results(self):
         for i in range(0, config.dataset.test_dataset_num, config.tensorboard.loss_step):
-
             print('dist and xyz (km), phi and theta (degree)')
             print('%d-th\tpredict\tlabel' % (i + 1))
 

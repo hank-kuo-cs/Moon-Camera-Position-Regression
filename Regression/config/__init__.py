@@ -13,11 +13,11 @@ class Config:
                                cuda_device_number=0,
                                parallel_gpus=[0, 2, 3])
 
-        self.dataset = DatasetConfig(dataset_path='/data/space/Dataset_dist_200km',
-                                     labels=['dist'],
+        self.dataset = DatasetConfig(dataset_path='/data/space/Dataset_fix_up_100km',
+                                     labels=['dist', 'c_theta', 'c_phi', 'p_x', 'p_y', 'p_z', 'u_x', 'u_y', 'u_z'],
                                      dataset_size={'train': 80000, 'test': 10000, 'validation': 10000},
                                      sub_dataset_size=10000,
-                                     dist_range=200.0,   # km
+                                     dist_range=100.0,   # km
                                      normalize_point_weight=2000.0)
 
         self.network = NetworkConfig(network_model='VGG19',
@@ -27,7 +27,7 @@ class Config:
                                      momentum=0.9)
 
         self.tensorboard = TensorboardConfig(tensorboard_path='/home/hank/Tensorboard',
-                                             experiment_name='E2_only_dist_200km',
+                                             experiment_name='E5_fix_up_100km',
                                              loss_step=100,
                                              tsne_epoch_step=50,
                                              is_write_loss=True,
