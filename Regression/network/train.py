@@ -11,7 +11,8 @@ class TrainNetwork(Network):
                          optimizer=optimizer,
                          tensorboard_writer=tensorboard_writer,
                          epoch=epoch)
-        self.show_loss = 0.0
+        self.avg_step_loss = 0.0
+        self.avg_epoch_loss = 0.0
 
     def run_one_epoch(self):
         self.model.train()
@@ -27,16 +28,23 @@ class TrainNetwork(Network):
             self.optimizer.step()
 
             self.show_step_loss(loss=loss.item(), step=idx+1)
-            self.tensorboard.add_loss(loss.item())
-            self.tensorboard.write_step_loss()
 
         self.save_model()
-        self.tensorboard.write_epoch_loss()
+        self.show_epoch_loss()
         self._epoch += 1
 
     def show_step_loss(self, loss, step):
-        self.show_loss += loss
+        self.avg_step_loss += loss
+        self.avg_epoch_loss += loss
+
         if step % config.tensorboard.loss_step == 0:
-            avg_step_loss = self.show_loss / config.tensorboard.loss_step
-            logging.info('epoch %d, %d step, loss = %.6f' % (self._epoch, step, avg_step_loss))
-            self.show_loss = 0
+            self.avg_step_loss /= config.tensorboard.loss_step
+            logging.info('epoch %d, %d step, loss = %.6f' % (self._epoch, step, self.avg_step_loss))
+            self.tensorboard.write_avg_step_loss(step=step, epoch=self._epoch, avg_step_loss=self.avg_step_loss)
+
+            self.avg_step_loss = 0.0
+
+    def show_epoch_loss(self):
+        self.avg_epoch_loss /= (config.dataset.train_dataset_num // config.network.batch_size)
+        self.tensorboard.write_avg_epoch_loss(epoch=self._epoch, avg_epoch_loss=self.avg_epoch_loss)
+        self.avg_epoch_loss = 0.0
