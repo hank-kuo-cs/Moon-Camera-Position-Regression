@@ -1,3 +1,4 @@
+import torch
 import numpy as np
 from network.network import Network
 from config import config
@@ -17,6 +18,8 @@ class TestNetwork(Network):
 
         for idx, (inputs, labels) in tqdm(enumerate(self.get_data())):
             predicts = self.model(inputs)
+
+            predicts, labels = self.transform_spherical_angle_label(predicts, labels)
 
             self.add_predicts(predicts)
             self.add_labels(labels)
@@ -59,17 +62,6 @@ class TestNetwork(Network):
         if len(self.label_types) < 3:
             return
 
-        tmp = np.zeros((config.dataset.test_dataset_num, 2), dtype=np.float)
-
-        self.predicts[:, 1: 3] = np.remainder(self.predicts[:, 1: 3], 1)
-
-        over_one_radius_indices = np.abs(self.predicts[:, 1:3] - self.labels[:, 1:3]) > 180
-
-        tmp[over_one_radius_indices & (self.labels[:, 1:3] < self.predicts[:, 1:3])] = 360
-        tmp[over_one_radius_indices & (self.labels[:, 1:3] >= self.predicts[:, 1:3])] = -360
-
-        self.labels[:, 1:3] += tmp
-
         theta_avg_degree_error = np.average(np.abs(self.predicts[:, 1] - self.labels[:, 1]))
         print('Camera theta average error: ±%.3f degree' % theta_avg_degree_error)
 
@@ -104,3 +96,18 @@ class TestNetwork(Network):
         if len(self.label_types) > 3:
             self.predicts[:, 3:] *= config.dataset.normalize_point_weight
             self.labels[:, 3:] *= config.dataset.normalize_point_weight
+
+    @staticmethod
+    def transform_spherical_angle_label(predicts, labels):
+        tmp = torch.zeros((config.network.batch_size, 2), dtype=torch.float).to(config.cuda.device)
+
+        predicts[:, 1: 3] = torch.remainder(predicts[:, 1: 3], 1)
+
+        over_one_radius_indices = torch.abs(predicts[:, 1:3] - labels[:, 1:3]) > 0.5
+
+        tmp[over_one_radius_indices & (labels[:, 1:3] < predicts[:, 1:3])] = 1
+        tmp[over_one_radius_indices & (labels[:, 1:3] >= predicts[:, 1:3])] = -1
+
+        labels[:, 1:3] += tmp
+
+        return predicts, labels
