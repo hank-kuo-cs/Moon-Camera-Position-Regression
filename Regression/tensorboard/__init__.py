@@ -24,5 +24,4 @@ class TensorboardWriter:
 
     def check_parameters(self):
         assert isinstance(self._dataset_type, str)
-
         assert self._dataset_type in config.dataset.dataset_types
