@@ -2,7 +2,7 @@ import os
 import cv2
 import json
 import numpy as np
-from config import DATASET_PATH, WINDOW_HEIGHT, WINDOW_WIDTH, DATA_NUM
+from config import DATASET_PATH, WINDOW_HEIGHT, WINDOW_WIDTH, DATA_NUM, PYR_DOWN_TIME
 from model import Moon
 from dataset.label import LabelGenerator
 from dataset.view import RandomViewGenerator
@@ -61,6 +61,7 @@ class DatasetWriter:
 
     def _save_image(self, image):
         self.check_image(image)
+        image = self.resize_image(image)
 
         save_image = {'train': self._save_train_image,
                       'test': self._save_test_image,
@@ -127,6 +128,12 @@ class DatasetWriter:
         assert isinstance(path, str)
 
         os.makedirs(path, exist_ok=True)
+
+    @staticmethod
+    def resize_image(image):
+        for i in range(PYR_DOWN_TIME):
+            image = cv2.pyrDown(image)
+        return image
 
     @staticmethod
     def check_image(image):

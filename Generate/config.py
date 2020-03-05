@@ -6,9 +6,9 @@ WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
 
 # Data
-OBJECT_PATH = 'data/Moon_8K.obj'
-MATERIAL_PATH = 'data/Moon_8K.mtl'
-TEXTURE_PATH = 'data/Diffuse_8K.png'
+OBJECT_PATH = '../../data/Moon_8K.obj'
+MATERIAL_PATH = '../../data/Moon_8K.mtl'
+TEXTURE_PATH = '../../data/Diffuse_8K.png'
 
 # View
 """
@@ -39,9 +39,10 @@ GL_UNIT_TO_KM = 1000
 KM_TO_GL_UNIT = 0.001
 
 # Dataset
-DATASET_PATH = '../Dataset_dist_80km'
-DATA_NUM = 10000
-GAMMA_RANGE = [0.0, 80]  # km
+DATASET_PATH = '../../Dataset_fix_up_100km'
+DATA_NUM = 100000
+GAMMA_RANGE = [0.0, 100]  # km
 IS_CHANGE_EYE = True
 IS_CHANGE_AT = True
-IS_CHANGE_UP = True
+IS_CHANGE_UP = False
+PYR_DOWN_TIME = 1
