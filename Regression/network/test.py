@@ -99,6 +99,8 @@ class TestNetwork(Network):
 
     @staticmethod
     def transform_spherical_angle_label(predicts, labels):
+        if len(config.dataset.labels) < 2:
+            return
         tmp = torch.zeros((config.network.batch_size, 2), dtype=torch.float).to(config.cuda.device)
 
         predicts[:, 1: 3] = torch.remainder(predicts[:, 1: 3], 1)
