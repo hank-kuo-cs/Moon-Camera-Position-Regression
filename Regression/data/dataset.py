@@ -44,7 +44,8 @@ class MoonDataset(Dataset):
 
     @staticmethod
     def refine_image(image):
-        image = cv2.pyrDown(image)
+        if image.shape[0] > 400:
+            image = cv2.pyrDown(image)
         image = cv2.equalizeHist(image)
 
         transform = transforms.Compose([
