@@ -61,6 +61,7 @@ class DatasetWriter:
 
     def _save_image(self, image):
         self.check_image(image)
+        image = self.pyr_down_image(image)
 
         save_image = {'train': self._save_train_image,
                       'test': self._save_test_image,
@@ -127,6 +128,12 @@ class DatasetWriter:
         assert isinstance(path, str)
 
         os.makedirs(path, exist_ok=True)
+
+    @staticmethod
+    def pyr_down_image(image):
+        if image.shape[0] > 600:
+            image = cv2.pyrDown(image)
+        return image
 
     @staticmethod
     def check_image(image):
