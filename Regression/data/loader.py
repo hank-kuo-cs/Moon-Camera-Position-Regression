@@ -24,7 +24,8 @@ class DatasetLoader:
     def load_images_path(self):
         sub_dirs_path = self.get_sub_dirs_path()
         for sub_dir in sub_dirs_path:
-            images_path_in_one_sub_dir = sorted(glob(sub_dir + '/*'))
+            images_path_in_one_sub_dir = ['%s/%d.png' % (sub_dir, i) for i in range(config.dataset.sub_dataset_size)]
+            print(images_path_in_one_sub_dir)
             self.images_path += images_path_in_one_sub_dir
 
     def load_labels(self):
