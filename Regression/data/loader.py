@@ -22,9 +22,10 @@ class DatasetLoader:
         self.load_labels()
 
     def load_images_path(self):
+        sub_datset_size = config.dataset.sub_dataset_size
         sub_dirs_path = self.get_sub_dirs_path()
-        for sub_dir in sub_dirs_path:
-            images_path_in_one_sub_dir = ['%s/%d.png' % (sub_dir, i) for i in range(config.dataset.sub_dataset_size)]
+        for sub_num, sub_dir in enumerate(sub_dirs_path):
+            images_path_in_one_sub_dir = ['%s/%d.png' % (sub_dir, (sub_num + 1) * sub_datset_size + i) for i in range(sub_datset_size)]
             self.images_path += images_path_in_one_sub_dir
 
     def load_labels(self):
