@@ -55,5 +55,5 @@ class LossWriter:
         assert self.dataset_type in config.dataset.dataset_types
 
         assert self.epoch > 0
-        assert 0 < self.step <= self.steps_of_epochs
+        assert 0 < self.step <= self.step + self.steps_of_epochs
         assert self.loss > 0
