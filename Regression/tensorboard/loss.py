@@ -4,7 +4,7 @@ from config import config
 
 
 class LossWriter:
-    def __init__(self, epoch: int = 0, step: int = 0, dataset_type: str = Ncone, loss: float = 0.0):
+    def __init__(self, epoch: int = 0, step: int = 0, dataset_type: str = None, loss: float = 0.0):
         self.epoch = epoch
         self.step = step
         self.dataset_type = dataset_type
