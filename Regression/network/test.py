@@ -55,8 +55,16 @@ class TestNetwork(Network):
         dist_predicts = self.predicts[:, 0]
         dist_labels = self.labels[:, 0]
 
+        small_than_10km_indices = dist_labels <= 10
+
         dist_avg_km_error = np.average(np.abs((dist_predicts - dist_labels)))
         print('Distance average error: ±%.3f km' % dist_avg_km_error)
+
+        dist_small_than_10km_predicts = dist_predicts[small_than_10km_indices]
+        dist_small_than_10km_labels = dist_labels[small_than_10km_indices]
+
+        dist_avg_small_than_10km_error = np.average(np.abs(dist_small_than_10km_predicts - dist_small_than_10km_labels))
+        print('Distance average error (<= 10km): ±%.3f km' % dist_avg_small_than_10km_error)
 
     def show_angle_error(self):
         if len(self.label_types) < 3:
