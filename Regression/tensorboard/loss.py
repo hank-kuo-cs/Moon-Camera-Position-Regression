@@ -23,6 +23,9 @@ class LossWriter:
     def write_loss_by_step(self):
         self.check_parameters()
 
+        if self.step % config.tensorboard.loss_step != 0:
+            return
+
         tag = '{0}/{1}/loss_by_step'.format(config.tensorboard.experiment_name, self.dataset_type)
         self.add_scalar_to_tensorboard(tag=tag, value=self.loss, global_step=self.step + self.steps_of_epochs)
 
@@ -34,8 +37,6 @@ class LossWriter:
     @staticmethod
     def add_scalar_to_tensorboard(tag: str, value: float, global_step: int):
         if not config.tensorboard.is_write_loss:
-            return
-        if global_step % config.tensorboard.loss_step != 0:
             return
         writer_path = os.path.join(config.tensorboard.tensorboard_path, config.tensorboard.experiment_name)
         writer = SummaryWriter(writer_path)
