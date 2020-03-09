@@ -25,6 +25,7 @@ class DatasetLoader:
         sub_datset_size = config.dataset.sub_dataset_size
         sub_dirs_path = self.get_sub_dirs_path()
         for sub_num, sub_dir in enumerate(sub_dirs_path):
+            self.check_sub_dir_image_num(sub_dir)
             images_path_in_one_sub_dir = ['%s/%d.png' % (sub_dir, sub_num * sub_datset_size + i) for i in range(sub_datset_size)]
             self.images_path += images_path_in_one_sub_dir
 
@@ -41,6 +42,15 @@ class DatasetLoader:
     def get_labels_path(self):
         labels_path = os.path.join(self._dataset_path, 'label/*')
         return sorted(glob(labels_path))
+
+    @staticmethod
+    def check_sub_dir_image_num(sub_dir):
+        images_path = glob(sub_dir + '/*.png')
+        try:
+            assert len(images_path) == config.dataset.sub_dataset_size
+        except AssertionError:
+            raise AssertionError('Number of images (%d) in one subdirectory (%s) not fit the config setting (%d)'
+                                 % (len(images_path), sub_dir, config.dataset.sub_dataset_size))
 
     @staticmethod
     def get_content_in_json(json_file):
