@@ -61,7 +61,7 @@ class ValidateNetwork(Network):
 
         dist_avg_small_than_10km_error = np.average(np.abs(dist_small_than_10km_predicts - dist_small_than_10km_labels))
         dist_avg_small_than_10km_error = float(dist_avg_small_than_10km_error)
-        self.tensorboard.write_avg_error(label_type='dist(<=10km)', epoch=self._epoch, avg_error=dist_avg_small_than_10km_error)
+        self.tensorboard.write_avg_error(label_type='dist_small_than_10km', epoch=self._epoch, avg_error=dist_avg_small_than_10km_error)
         print('Distance average error (<= 10km): ±%.3f km' % dist_avg_small_than_10km_error)
 
     def write_angle_error(self):
