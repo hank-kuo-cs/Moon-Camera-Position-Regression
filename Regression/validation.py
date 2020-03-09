@@ -63,7 +63,7 @@ class Validating:
 
     @property
     def models_path(self):
-        return glob('./checkpoint/model*')
+        return sorted(glob('./checkpoint/model*'))
 
     @staticmethod
     def get_epoch_num(model_path: str):
