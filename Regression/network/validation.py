@@ -52,6 +52,7 @@ class ValidateNetwork(Network):
         small_than_10km_indices = dist_labels <= 10
 
         dist_avg_km_error = np.average(np.abs((dist_predicts - dist_labels)))
+        dist_avg_km_error = float(dist_avg_km_error)
         self.tensorboard.write_avg_error(label_type='dist', epoch=self._epoch, avg_error=dist_avg_km_error)
         print('Distance average error: ±%.3f km' % dist_avg_km_error)
 
@@ -59,6 +60,7 @@ class ValidateNetwork(Network):
         dist_small_than_10km_labels = dist_labels[small_than_10km_indices]
 
         dist_avg_small_than_10km_error = np.average(np.abs(dist_small_than_10km_predicts - dist_small_than_10km_labels))
+        dist_avg_small_than_10km_error = float(dist_avg_small_than_10km_error)
         self.tensorboard.write_avg_error(label_type='dist(<=10km)', epoch=self._epoch, avg_error=dist_avg_small_than_10km_error)
         print('Distance average error (<= 10km): ±%.3f km' % dist_avg_small_than_10km_error)
 
@@ -67,10 +69,12 @@ class ValidateNetwork(Network):
             return
 
         theta_avg_degree_error = np.average(np.abs(self.predicts[:, 1] - self.labels[:, 1]))
+        theta_avg_degree_error = float(theta_avg_degree_error)
         self.tensorboard.write_avg_error(label_type='c_theta', epoch=self._epoch, avg_error=theta_avg_degree_error)
         print('Camera theta average error: ±%.3f degree' % theta_avg_degree_error)
 
         phi_avg_degree_error = np.average(np.abs(self.predicts[:, 2] - self.labels[:, 2]))
+        phi_avg_degree_error = float(phi_avg_degree_error)
         self.tensorboard.write_avg_error(label_type='c_phi', epoch=self._epoch, avg_error=phi_avg_degree_error)
         print('Camera phi average error: ±%.3f degree' % phi_avg_degree_error)
 
@@ -81,6 +85,7 @@ class ValidateNetwork(Network):
                 point_labels = self.labels[:, i]
 
                 point_avg_km_error = np.average(np.abs(point_predicts - point_labels))
+                point_avg_km_error = float(point_avg_km_error)
                 self.tensorboard.write_avg_error(label_type=self.label_types[i], epoch=self._epoch, avg_error=point_avg_km_error)
                 print('%s average error: ±%.3f' % (self.label_types[i], point_avg_km_error))
 
