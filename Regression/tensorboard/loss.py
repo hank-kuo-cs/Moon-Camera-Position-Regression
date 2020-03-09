@@ -34,6 +34,11 @@ class LossWriter:
         tag = '{0}/{1}/loss_by_epoch'.format(config.tensorboard.experiment_name, self.dataset_type)
         self.add_scalar_to_tensorboard(tag=tag, value=self.loss, global_step=self.epoch)
 
+    def write_error_by_epoch(self, label_type):
+        self.check_parameters()
+        tag = '{0}/{1}/{2}_error'.format(config.tensorboard.experiment_name, self.dataset_type, label_type)
+        self.add_scalar_to_tensorboard(tag=tag, value=self.loss, global_step=self.epoch)
+
     @staticmethod
     def add_scalar_to_tensorboard(tag: str, value: float, global_step: int):
         if not config.tensorboard.is_write_loss:

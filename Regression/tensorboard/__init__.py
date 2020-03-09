@@ -19,6 +19,10 @@ class TensorboardWriter:
         self.loss_writer.set_parameters(epoch=epoch, loss=avg_epoch_loss)
         self.loss_writer.write_loss_by_epoch()
 
+    def write_avg_error(self, label_type: str, epoch: int, avg_error: float):
+        self.loss_writer.set_parameters(epoch=epoch, loss=avg_error)
+        self.loss_writer.write_error_by_epoch(label_type)
+
     def add_tsne(self, features):
         pass
 
