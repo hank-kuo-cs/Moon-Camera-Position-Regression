@@ -61,7 +61,7 @@ class DatasetWriter:
 
     def _save_image(self, image):
         self.check_image(image)
-        image = self.resize_image(image)
+        image = self.pyr_down_image(image)
 
         save_image = {'train': self._save_train_image,
                       'test': self._save_test_image,
@@ -130,8 +130,8 @@ class DatasetWriter:
         os.makedirs(path, exist_ok=True)
 
     @staticmethod
-    def resize_image(image):
-        for i in range(PYR_DOWN_TIME):
+    def pyr_down_image(image):
+        if image.shape[0] > 600:
             image = cv2.pyrDown(image)
         return image
 

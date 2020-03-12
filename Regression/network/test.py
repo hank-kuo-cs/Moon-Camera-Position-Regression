@@ -35,7 +35,7 @@ class TestNetwork(Network):
         self.show_avg_error()
 
     def show_some_results(self):
-        for i in range(0, config.dataset.test_dataset_num, config.tensorboard.loss_step):
+        for i in range(0, 10):
             print('dist and xyz (km), phi and theta (degree)')
             print('%d-th\tpredict\tlabel' % (i + 1))
 
@@ -55,8 +55,16 @@ class TestNetwork(Network):
         dist_predicts = self.predicts[:, 0]
         dist_labels = self.labels[:, 0]
 
+        small_than_10km_indices = dist_labels <= 10
+
         dist_avg_km_error = np.average(np.abs((dist_predicts - dist_labels)))
         print('Distance average error: ±%.3f km' % dist_avg_km_error)
+
+        dist_small_than_10km_predicts = dist_predicts[small_than_10km_indices]
+        dist_small_than_10km_labels = dist_labels[small_than_10km_indices]
+
+        dist_avg_small_than_10km_error = np.average(np.abs(dist_small_than_10km_predicts - dist_small_than_10km_labels))
+        print('Distance average error (<= 10km): ±%.3f km' % dist_avg_small_than_10km_error)
 
     def show_angle_error(self):
         if len(self.label_types) < 3:
@@ -99,6 +107,9 @@ class TestNetwork(Network):
 
     @staticmethod
     def transform_spherical_angle_label(predicts, labels):
+        if len(config.dataset.labels) < 2:
+            return predicts, labels
+
         tmp = torch.zeros((config.network.batch_size, 2), dtype=torch.float).to(config.cuda.device)
 
         predicts[:, 1: 3] = torch.remainder(predicts[:, 1: 3], 1)
