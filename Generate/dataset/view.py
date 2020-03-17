@@ -40,7 +40,7 @@ class RandomViewGenerator:
 
         return eye
 
-    def get_random_at(self):
+    def get_random_at(self) -> Cartesian3DPoint:
         gamma_gl_range = [0.0, 0.5 * MOON_MAX_RADIUS_IN_GL_UNIT]
 
         gamma = np.random.uniform(low=gamma_gl_range[0], high=gamma_gl_range[1])
@@ -53,7 +53,7 @@ class RandomViewGenerator:
 
         return at
 
-    def get_random_up(self):
+    def get_random_up(self) -> Cartesian3DPoint:
         while True:
             up_vec = np.random.uniform(0, 1, 3)
             up = self.normalize_up(up_vec)
@@ -72,7 +72,7 @@ class RandomViewGenerator:
 
         return eye + at_vec
 
-    def normalize_up(self, up_vec: np.ndarray):
+    def normalize_up(self, up_vec: np.ndarray) -> Cartesian3DPoint:
         assert isinstance(up_vec, np.ndarray)
         at_vec = self.moon_view.at - self.moon_view.eye
         at_vec = at_vec.to_numpy()
@@ -85,7 +85,7 @@ class RandomViewGenerator:
         return self.moon_view.eye + up_vec
 
     @staticmethod
-    def normalize_vector(vec: np.ndarray):
+    def normalize_vector(vec: np.ndarray) -> list:
         assert isinstance(vec, np.ndarray)
         length = np.linalg.norm(vec)
         vec = vec / length if length > 0 else vec
@@ -93,9 +93,9 @@ class RandomViewGenerator:
         return vec.tolist() if type(vec) == np.ndarray else vec
 
     @staticmethod
-    def get_random_theta():
+    def get_random_theta() -> float:
         return np.arccos(1 - 2 * np.random.uniform(0, 1))
 
     @staticmethod
-    def get_random_phi():
+    def get_random_phi() -> float:
         return 2 * np.pi * np.random.uniform(0, 1)
