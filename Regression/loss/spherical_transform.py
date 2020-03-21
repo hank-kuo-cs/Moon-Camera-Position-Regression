@@ -16,7 +16,9 @@ def transform_spherical_angle_label(predicts, labels):
 
 
 def get_spherical_angle_constant_loss(predicts):
+    constant_weight = 0.001
     constant_loss = torch.abs(predicts[:, 1:3] // 1)
     constant_loss = torch.sum(constant_loss) / config.network.batch_size
+    constant_loss *= constant_weight
 
     return constant_loss

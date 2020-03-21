@@ -51,6 +51,7 @@ class CudaConfig:
         return self._parallel_gpus
 
     def set_cuda_device(self):
+        return
         if self.device == 'cuda':
             os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
             os.environ['CUDA_VISIBLE_DEVICES'] = str(self.cuda_device_number)
