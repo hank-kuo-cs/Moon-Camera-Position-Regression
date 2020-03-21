@@ -1,3 +1,4 @@
+from model import Cartesian3DPoint, Spherical3DPoint
 # Window
 """
 Window size equals to your image size.
@@ -18,12 +19,12 @@ note that eye, at, and up are in cartesian coordinate.
 """
 VIEW = {
     'viewport': [800, 800],
-    'fov': 120.0,
-    'znear': 1.0,
-    'zfar': 100.0,
-    'eye': [1.745721, 0, 0],
-    'at': [1, 1, 1],
-    'up': [0, 1, 0]
+    'fov': 120,
+    'znear': 0.0001,
+    'zfar': 10000.0,
+    'eye': [1.78, 0.0, 0.0],
+    'at': [1.0, 2.0, 0.0],
+    'up': [0.0, 1.0, 0.0]
 }
 
 # Light
@@ -34,15 +35,17 @@ LIGHT = {
 }
 
 # Unit
-MOON_MAX_RADIUS_IN_GL_UNIT = 1.745721
-GL_UNIT_TO_KM = 1000
-KM_TO_GL_UNIT = 0.001
+MOON_MAX_RADIUS_IN_GL_UNIT = 1.742887
+GL_UNIT_TO_KM = 996.679647
+# MOON_MAX_RADIUS_IN_GL_UNIT = 1.7459001632827746
+# GL_UNIT_TO_KM = 1737.1 / MOON_MAX_RADIUS_IN_GL_UNIT
+
+KM_TO_GL_UNIT = 1 / GL_UNIT_TO_KM
 
 # Dataset
-DATASET_PATH = '../../Dataset_fix_up_100km'
+DATASET_PATH = '../../Dataset_new_dist_80km'
 DATA_NUM = 100000
-GAMMA_RANGE = [0.0, 100]  # km
+GAMMA_RANGE = [0.2, 80]  # km
 IS_CHANGE_EYE = True
 IS_CHANGE_AT = True
 IS_CHANGE_UP = False
-PYR_DOWN_TIME = 1
