@@ -30,8 +30,3 @@ if __name__ == '__main__':
         image = renderer.get_image()
 
         dataset_writer.write_data(image=image, moon=renderer.moon)
-
-    # Generate single image
-    # renderer.set_view()
-    # renderer.render_moon()
-    # renderer.save_image('test.png')
