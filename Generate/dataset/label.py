@@ -35,26 +35,8 @@ class LabelGenerator:
         return label
 
     def set_distance(self):
-        # New Distance
-        eye = self.view.eye.to_numpy()
-
-        dist_with_vertices = np.linalg.norm(self.vertices - eye, axis=1)
-        nearest_vertex_idx = np.argmin(dist_with_vertices)
-
-        nearest_vertex = self.vertices[nearest_vertex_idx]
-        v1 = nearest_vertex - eye
-        v2 = -eye
-
-        dist_with_moon_surface = self.get_project_vector_length(v1, v2)
-
-        self.label['dist'] = dist_with_moon_surface * GL_UNIT_TO_KM
-
-        # Old Distance
-        # dist = (self.spherical_eye.gamma - MOON_MAX_RADIUS_IN_GL_UNIT) * GL_UNIT_TO_KM
-        #
-        # assert 0 < dist < 80
-        #
-        # self.label['dist'] = dist
+        dist = (self.spherical_eye.gamma - MOON_MAX_RADIUS_IN_GL_UNIT) * GL_UNIT_TO_KM
+        self.label['dist'] = dist
 
         return self.label
 

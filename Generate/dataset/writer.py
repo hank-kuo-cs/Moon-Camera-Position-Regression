@@ -2,7 +2,7 @@ import os
 import cv2
 import json
 import numpy as np
-from config import DATASET_PATH, WINDOW_HEIGHT, WINDOW_WIDTH, DATA_NUM, PYR_DOWN_TIME
+from config import DATASET_PATH, WINDOW_HEIGHT, WINDOW_WIDTH, DATA_NUM
 from model import Moon
 from dataset.label import LabelGenerator
 from dataset.view import RandomViewGenerator
