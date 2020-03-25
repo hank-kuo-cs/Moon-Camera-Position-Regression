@@ -34,7 +34,7 @@ class Pytorch3DRenderer:
 
     def render_image(self) -> np.ndarray:
         rasterizer = MeshRasterizer(cameras=self.cameras,
-                                    raster_settings=self.raster_settings),
+                                    raster_settings=self.raster_settings)
 
         shader = TexturedSoftPhongShader(device=self.device,
                                          cameras=self.cameras,
