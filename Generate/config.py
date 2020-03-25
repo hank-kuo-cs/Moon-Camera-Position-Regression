@@ -19,7 +19,7 @@ note that eye, at, and up are in cartesian coordinate.
 """
 VIEW = {
     'viewport': [800, 800],
-    'fov': 90,
+    'fov': 120,
     'znear': 0.0001,
     'zfar': 100.0,
     'eye': [0.0, 0.0, 0.0],
@@ -48,7 +48,7 @@ GL_UNIT_TO_KM = 1000
 KM_TO_GL_UNIT = 0.001
 
 # Dataset
-DATASET_PATH = '../../Dataset_only_c_100km_old_dist'
+DATASET_PATH = '../../Dataset_only_c_100km_fov120'
 DATA_NUM = 100000
 GAMMA_RANGE = [1.0, 100.0]  # km
 IS_CHANGE_EYE = True
