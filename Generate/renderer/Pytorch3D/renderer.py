@@ -33,6 +33,8 @@ class Pytorch3DRenderer:
         self.lights = load_lights(moon_light) if moon_light else load_lights(self.moon.light)
 
     def render_image(self) -> np.ndarray:
+        torch.cuda.set_device(self.device)
+
         rasterizer = MeshRasterizer(cameras=self.cameras,
                                     raster_settings=self.raster_settings)
 
