@@ -8,8 +8,6 @@ def load_mesh(obj_path):
     device = torch.device('cuda:%s' % DEVICE_NUM)
     torch.cuda.set_device(device)
     vertices, faces, aux = load_obj(obj_path)
-    vertices = vertices.to(device)
-    faces = faces.verts_idx.to(device)
 
     vertices_uvs = aux.verts_uvs[None, ...].to(device)
     faces_uvs = faces.textures_idx[None, ...].to(device)
@@ -21,6 +19,9 @@ def load_mesh(obj_path):
     textures = Textures(verts_uvs=vertices_uvs,
                         faces_uvs=faces_uvs,
                         maps=texture_maps,)
+
+    vertices = vertices.to(device)
+    faces = faces.verts_idx.to(device)
 
     mesh = Meshes(verts=[vertices],
                   faces=[faces],
