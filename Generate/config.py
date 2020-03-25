@@ -21,7 +21,7 @@ VIEW = {
     'viewport': [800, 800],
     'fov': 120,
     'znear': 0.0001,
-    'zfar': 100.0,
+    'zfar': 1000.0,
     'eye': [0.0, 0.0, 0.0],
     'at': [0.0, 0.0, 0.0],
     'up': [0.0, 1.0, 0.0]
@@ -35,12 +35,6 @@ LIGHT = {
 }
 
 # Unit
-# Old Dist
-# MOON_MAX_RADIUS_IN_GL_UNIT = 1.742887
-# GL_UNIT_TO_KM = 1737.1 / MOON_MAX_RADIUS_IN_GL_UNIT
-# KM_TO_GL_UNIT = 1 / GL_UNIT_TO_KM
-
-# New Dist
 MOON_MAX_RADIUS_IN_GL_UNIT = 1.7459008620440053
 # GL_UNIT_TO_KM = 1737.1 / MOON_MAX_RADIUS_IN_GL_UNIT
 # KM_TO_GL_UNIT = 1 / GL_UNIT_TO_KM
