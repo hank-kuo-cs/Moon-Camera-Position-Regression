@@ -66,7 +66,7 @@ class Training:
 
         model_path = self.get_pretrain_model_path()
         if model_path and not self._is_scratch:
-            self._epoch = self.get_epoch_num(model_path)
+            self._epoch = self.get_epoch_num(model_path) + 1
             self.model.load_state_dict(torch.load(model_path))
             logging.info('Use pretrained model %s to continue training' % model_path)
         else:

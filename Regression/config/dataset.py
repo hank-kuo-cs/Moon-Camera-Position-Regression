@@ -42,6 +42,10 @@ class DatasetConfig:
         return self._dataset_types
 
     @property
+    def sub_dataset_size(self):
+        return self._sub_dataset_size
+
+    @property
     def dist_range(self) -> float:
         return self._dist_range
 
