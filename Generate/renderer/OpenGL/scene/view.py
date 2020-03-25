@@ -1,5 +1,5 @@
 from model import MoonView, Cartesian3DPoint
-from renderer.scene.lib import *
+from renderer.OpenGL.scene.lib import *
 
 
 class ViewSetting:

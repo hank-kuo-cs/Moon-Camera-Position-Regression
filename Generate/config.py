@@ -1,3 +1,4 @@
+import os
 from model import Cartesian3DPoint, Spherical3DPoint
 # Window
 """
@@ -42,9 +43,14 @@ GL_UNIT_TO_KM = 1000
 KM_TO_GL_UNIT = 0.001
 
 # Dataset
-DATASET_PATH = '../../Dataset_only_c_100km_fov120'
-DATA_NUM = 100000
+DATASET_PATH = 'Dataset_test'
+DATA_NUM = 1
 GAMMA_RANGE = [1.0, 100.0]  # km
 IS_CHANGE_EYE = True
 IS_CHANGE_AT = False
 IS_CHANGE_UP = False
+
+# GPU
+DEVICE_NUM = 0
+
+os.environ['CUDA_VISIBLE_DEVICES'] = str(DEVICE_NUM)

@@ -3,12 +3,12 @@ import pygame
 import numpy as np
 from config import WINDOW_WIDTH, WINDOW_HEIGHT
 from model.moon import Moon
-from renderer.scene import LightSetting, ViewSetting
-from renderer.material import MoonSetting, TextureSetting
+from renderer.OpenGL.scene import LightSetting, ViewSetting
+from renderer.OpenGL.material import MoonSetting, TextureSetting
 from OpenGL.GL import glClear, glCallList, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT
 
 
-class Renderer:
+class OpenGLRenderer:
     def __init__(self, moon: Moon):
         self.moon = moon
         self.polygon_list_id = None

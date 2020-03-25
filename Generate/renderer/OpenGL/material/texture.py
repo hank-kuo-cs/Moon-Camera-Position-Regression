@@ -1,5 +1,5 @@
 from model import MoonTexture
-from renderer.material.lib import *
+from renderer.OpenGL.material.lib import *
 
 
 class TextureSetting:
