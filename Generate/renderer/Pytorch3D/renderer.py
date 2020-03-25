@@ -44,4 +44,5 @@ class Pytorch3DRenderer:
                                           shader=shader)
 
         image = self.mesh_renderer(self.mesh)
+        image = image.cpu().numpy()
         return image
