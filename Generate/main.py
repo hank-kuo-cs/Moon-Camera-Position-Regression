@@ -1,5 +1,4 @@
 import logging
-import numpy as np
 from tqdm import tqdm
 from loader import load_moon
 from dataset import DatasetWriter

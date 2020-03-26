@@ -1,11 +1,10 @@
 import torch
 from pytorch3d.renderer import look_at_view_transform, OpenGLPerspectiveCameras
 from model import MoonView
-from config import DEVICE_NUM
 
 
 def load_cameras(moon_view: MoonView):
-    device = torch.device('cuda:%s' % DEVICE_NUM)
+    device = torch.device('cuda')
 
     eye = moon_view.eye.to_list()
     at = moon_view.at.to_list()

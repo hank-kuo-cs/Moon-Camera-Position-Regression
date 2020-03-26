@@ -23,7 +23,7 @@ VIEW = {
     'fov': 120,
     'znear': 0.0001,
     'zfar': 1000.0,
-    'eye': [0.0, 0.0, 0.0],
+    'eye': [2.0, 0.0, 0.0],
     'at': [0.0, 0.0, 0.0],
     'up': [0.0, 1.0, 0.0]
 }
@@ -31,7 +31,7 @@ VIEW = {
 # Light
 LIGHT = {
     'position': (-40.0, 200.0, 100.0, 0.0),
-    'ambient': (0.2, 0.2, 0.2, 1.0),
+    'ambient': (0.5, 0.5, 0.5, 1.0),
     'diffuse': (0.5, 0.5, 0.5, 1.0)
 }
 
@@ -43,9 +43,9 @@ GL_UNIT_TO_KM = 1000
 KM_TO_GL_UNIT = 0.001
 
 # Dataset
-DATASET_PATH = 'Dataset_test'
-DATA_NUM = 1
-GAMMA_RANGE = [1.0, 100.0]  # km
+DATASET_PATH = '../../Dataset_test_pytorch3D'
+DATA_NUM = 100
+GAMMA_RANGE = [1.0, 15.0]  # km
 IS_CHANGE_EYE = True
 IS_CHANGE_AT = False
 IS_CHANGE_UP = False

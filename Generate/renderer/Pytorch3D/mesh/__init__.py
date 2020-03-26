@@ -1,12 +1,11 @@
 import torch
 from pytorch3d.io import load_obj
 from pytorch3d.structures import Meshes, Textures
-from config import DEVICE_NUM
 
 
 def load_mesh(obj_path):
-    device = torch.device('cuda:%s' % DEVICE_NUM)
-    torch.cuda.set_device(device)
+    device = torch.device('cuda')
+
     vertices, faces, aux = load_obj(obj_path)
 
     vertices_uvs = aux.verts_uvs[None, ...].to(device)

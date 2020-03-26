@@ -5,7 +5,7 @@ from pytorch3d.renderer import MeshRenderer, MeshRasterizer, TexturedSoftPhongSh
 from model import Moon
 from renderer.Pytorch3D.mesh import load_mesh
 from renderer.Pytorch3D.scene import load_lights, load_cameras, load_rasterization_setting
-from config import MOON_MAX_RADIUS_IN_GL_UNIT, GL_UNIT_TO_KM, OBJECT_PATH, DEVICE_NUM
+from config import OBJECT_PATH
 
 
 class Pytorch3DRenderer:
@@ -19,23 +19,25 @@ class Pytorch3DRenderer:
         self.mesh_renderer = None
 
     def set_device(self):
-        self.device = torch.device('cuda:%s' % DEVICE_NUM)
+        self.device = torch.device('cuda')
 
     def set_mesh(self):
         self.mesh = load_mesh(obj_path=OBJECT_PATH)
 
     def set_cameras(self, moon_view=None):
-        self.cameras = load_cameras(moon_view) if moon_view else load_cameras(self.moon.view)
+        if moon_view:
+            self.moon.view = moon_view
+        self.cameras = load_cameras(self.moon.view)
 
     def set_raster_settings(self):
         self.raster_settings = load_rasterization_setting()
 
     def set_lights(self, moon_light=None):
-        self.lights = load_lights(moon_light) if moon_light else load_lights(self.moon.light)
+        if moon_light:
+            self.moon.light = moon_light
+        self.lights = load_lights(self.moon.light)
 
     def render_image(self) -> np.ndarray:
-        torch.cuda.set_device(self.device)
-
         rasterizer = MeshRasterizer(cameras=self.cameras,
                                     raster_settings=self.raster_settings)
 
