@@ -10,9 +10,9 @@ def load_cameras(moon_view: MoonView):
     at = moon_view.at.to_list()
     up = moon_view.up.to_list()
 
-    R, T = look_at_view_transform(eye=((*eye),),
-                                  at=((*at),),
-                                  up=((*up),))
+    R, T = look_at_view_transform(eye=((eye[0], eye[1], eye[2]),),
+                                  at=((at[0], at[1], at[2]),),
+                                  up=((up[0], up[1], up[2]),))
 
     return OpenGLPerspectiveCameras(device=device,
                                     R=R,
