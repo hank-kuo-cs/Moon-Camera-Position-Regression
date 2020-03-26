@@ -7,7 +7,7 @@ from renderer import OpenGLRenderer, Pytorch3DRenderer
 from config import DATA_NUM
 
 
-def run_opengl(moon):
+def run_opengl(moon, dataset_writer):
     logging.info('Set up renderer...')
     renderer = OpenGLRenderer(moon=moon)
 
@@ -25,7 +25,7 @@ def run_opengl(moon):
         dataset_writer.write_data(image=image, moon=renderer.moon)
 
 
-def run_pytorch3d(moon):
+def run_pytorch3d(moon, dataset_writer):
     logging.info('Set up renderer...')
     renderer = Pytorch3DRenderer(moon=moon)
 
@@ -36,10 +36,9 @@ def run_pytorch3d(moon):
 
     logging.info('Render moon image with uniform view setting...')
     for i in tqdm(range(DATA_NUM)):
-        renderer.set_cameras()
+        renderer.set_cameras(dataset_writer.get_moon_view())
         image = renderer.render_image()
-        np.save('image_test.npy', image)
-        # dataset_writer.write_data(image=image, moon=renderer.moon)
+        dataset_writer.write_data(image=image, moon=renderer.moon)
 
 
 if __name__ == '__main__':
@@ -48,7 +47,7 @@ if __name__ == '__main__':
     logging.info('Load moon file...')
     moon = load_moon()
 
-    # logging.info('Set up dataset writer...')
-    # dataset_writer = DatasetWriter(moon=moon)
+    logging.info('Set up dataset writer...')
+    dataset_writer = DatasetWriter(moon=moon)
     # run_opengl(moon)
-    run_pytorch3d(moon)
+    run_pytorch3d(moon, dataset_writer)

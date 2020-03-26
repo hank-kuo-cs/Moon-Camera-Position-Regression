@@ -1,3 +1,4 @@
+import cv2
 import torch
 import numpy as np
 from pytorch3d.renderer import MeshRenderer, MeshRasterizer, TexturedSoftPhongShader
@@ -46,5 +47,11 @@ class Pytorch3DRenderer:
                                           shader=shader)
 
         image = self.mesh_renderer(self.mesh)
-        image = image.cpu().numpy()
+        image = self.refine_image(image)
+        return image
+
+    @staticmethod
+    def refine_image(image) -> np.ndarray:
+        image = image.cpu().numpy().squeeze() * 255
+        image = cv2.cvtColor(image, cv2.COLOR_RGBA2GRAY)
         return image
