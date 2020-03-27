@@ -16,16 +16,17 @@ class TestNetwork(Network):
     def run_one_epoch(self):
         self.model.eval()
 
-        for idx, (inputs, labels) in tqdm(enumerate(self.get_data())):
-            predicts = self.model(inputs)
+        with torch.no_grad():
+            for idx, (inputs, labels) in tqdm(enumerate(self.get_data())):
+                predicts = self.model(inputs)
 
-            predicts, labels = self.transform_spherical_angle_label(predicts, labels)
+                predicts, labels = self.transform_spherical_angle_label(predicts, labels)
 
-            self.add_predicts(predicts)
-            self.add_labels(labels)
+                self.add_predicts(predicts)
+                self.add_labels(labels)
 
-            loss = self.loss_func(predicts.clone(), labels.clone())
-            self.avg_loss += loss.item()
+                loss = self.loss_func(predicts.clone(), labels.clone())
+                self.avg_loss += loss.item()
 
         self.avg_loss /= (config.dataset.test_dataset_num // config.network.batch_size)
 
