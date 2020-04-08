@@ -1,7 +1,7 @@
 import torch
 from .mse import get_mse_loss
 from .image_comparison import get_image_comparison_loss
-from ...Generate.main import load_moon, Pytorch3DRenderer
+from ..generate.main import load_moon, Pytorch3DRenderer
 from ..config import config
 
 
