@@ -1,3 +1,4 @@
+import os
 import re
 import torch
 import logging
@@ -13,7 +14,7 @@ from .config import config
 
 class Testing:
     def __init__(self, args, data_loader):
-        self._model_path = ''
+        self._epoch_of_model = ''
         self._epoch = 0
         self.set_arguments(args)
 
@@ -30,7 +31,7 @@ class Testing:
         logging.info('Finish testing')
 
     def set_arguments(self, args):
-        self._model_path = args.model
+        self._epoch_of_model = args.epoch_of_model
 
     def set_network(self):
         self.network = TestNetwork(data_loader=self.data_loader,
@@ -58,13 +59,12 @@ class Testing:
         self.model = self.model.to(config.cuda.device)
 
     def set_model_pretrain(self):
-        model_path = self._model_path
-        if not model_path:
-            pretrain_model_paths = glob('./checkpoint/model*')
+        epoch_of_model = self._epoch_of_model
+        if not epoch_of_model:
+            pretrain_model_paths = glob('%s/model*' % self.checkpoint_path)
             model_path = sorted(pretrain_model_paths)[-1] if pretrain_model_paths else None
-
-        if not model_path:
-            raise ValueError('Cannot find model to test!')
+        else:
+            model_path = '%s/model_epoch%.3d.pth' % (self.checkpoint_path, int(epoch_of_model))
 
         self._epoch = self.get_epoch_num(model_path)
         self.model.load_state_dict(torch.load(model_path))
@@ -80,16 +80,24 @@ class Testing:
         raise ValueError('Cannot find epoch number in the model path: %s' % model_path)
 
     @property
+    def checkpoint_path(self):
+        file_path = os.path.abspath(__file__)
+        dir_path = os.path.dirname(file_path)
+        return os.path.join(dir_path, 'checkpoint')
+
+    @property
     def loss_func(self):
         return MoonLoss()
 
 
-if __name__ == '__main__':
+def test():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%m-%d %H:%M:%S')
     config.print_config()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model', type=str, help='Use a certain model in checkpoint directory to test')
+    parser.add_argument('-e', '--epoch_of_model',
+                        type=str,
+                        help='Use a model with specific epoch in checkpoint directory to test')
 
     arguments = parser.parse_args()
 
