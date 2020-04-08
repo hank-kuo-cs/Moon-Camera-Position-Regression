@@ -1,3 +1,4 @@
+import os
 import re
 import torch
 import logging
@@ -13,7 +14,6 @@ from .config import config
 
 class Validating:
     def __init__(self, data_loader):
-        self._model_path = ''
         self._epoch = 0
 
         self.network = None
@@ -65,7 +65,7 @@ class Validating:
 
     @property
     def models_path(self):
-        return sorted(glob('./checkpoint/model*'))
+        return sorted(glob('%s/model*' % self.checkpoint_path))
 
     @staticmethod
     def get_epoch_num(model_path: str):
@@ -77,6 +77,12 @@ class Validating:
         raise ValueError('Cannot find epoch number in the model path: %s' % model_path)
 
     @property
+    def checkpoint_path(self):
+        file_path = os.path.abspath(__file__)
+        dir_path = os.path.dirname(file_path)
+        return os.path.join(dir_path, 'checkpoint')
+
+    @property
     def loss_func(self):
         return MoonLoss()
 
@@ -85,7 +91,7 @@ class Validating:
         return TensorboardWriter(dataset_type='validation')
 
 
-if __name__ == '__main__':
+def validate():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%m-%d %H:%M:%S')
     config.print_config()
 
