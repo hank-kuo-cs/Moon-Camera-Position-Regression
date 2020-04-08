@@ -98,7 +98,8 @@ class Training:
     @property
     def checkpoint_path(self):
         file_path = os.path.abspath(__file__)
-        return os.path.join(file_path, 'checkpoint')
+        dir_path = os.path.dirname(file_path)
+        return os.path.join(dir_path, 'checkpoint')
 
     @property
     def loss_func(self):
