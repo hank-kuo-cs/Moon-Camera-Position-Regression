@@ -53,4 +53,4 @@ IS_CHANGE_UP = False
 # GPU
 DEVICE_NUM = 0
 
-os.environ['CUDA_VISIBLE_DEVICES'] = str(DEVICE_NUM)
+# os.environ['CUDA_VISIBLE_DEVICES'] = str(DEVICE_NUM)
