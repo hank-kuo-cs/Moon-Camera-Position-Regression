@@ -38,7 +38,8 @@ def run_pytorch3d(moon, dataset_writer):
     for i in tqdm(range(DATA_NUM)):
         renderer.set_cameras(dataset_writer.get_moon_view())
         image = renderer.render_image()
-        dataset_writer.write_data(image=image, moon=renderer.moon)
+        img_data = renderer.refine_image_to_data(image)
+        dataset_writer.write_data(image=img_data, moon=renderer.moon)
 
 
 if __name__ == '__main__':

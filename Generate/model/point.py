@@ -110,6 +110,9 @@ class Cartesian3DPoint:
     def length_with_origin(self):
         return np.linalg.norm(self._point)
 
+    def __getitem__(self, item):
+        return self._point[item]
+
     def __neg__(self):
         return Cartesian3DPoint(x=-self.x, y=-self.y, z=self.z)
 

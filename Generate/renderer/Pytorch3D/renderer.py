@@ -53,11 +53,10 @@ class Pytorch3DRenderer:
                                           shader=shader)
 
         image = self.mesh_renderer(self.mesh)
-        image = self.refine_image(image)
         return image
 
     @staticmethod
-    def refine_image(image) -> np.ndarray:
-        image = image.cpu().numpy().squeeze() * 255
-        image = cv2.cvtColor(image, cv2.COLOR_RGBA2GRAY)
-        return image
+    def refine_image_to_data(image) -> np.ndarray:
+        img_data = image.cpu().numpy().squeeze() * 255
+        img_data = cv2.cvtColor(img_data, cv2.COLOR_RGBA2GRAY)
+        return img_data

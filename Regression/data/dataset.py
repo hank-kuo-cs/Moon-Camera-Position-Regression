@@ -9,12 +9,13 @@ from ..config import config
 
 class MoonDataset(Dataset):
     def __init__(self, data_type: str):
-        data_types = ['train', 'test', 'validation']
-        assert data_type in data_types
+        assert data_type in ['train', 'test', 'validation']
+
         self.dataset_loader = DatasetLoader(data_type)
 
     def __len__(self):
         assert len(self.dataset_loader.images_path) == len(self.dataset_loader.labels)
+
         return len(self.dataset_loader.images_path)
 
     def __getitem__(self, item):
@@ -58,15 +59,11 @@ class MoonDataset(Dataset):
         return image
 
     @classmethod
-    def refine_label(cls, label):
-        refined_label = []
-        label_types = config.dataset.labels
+    def refine_label(cls, label: dict):
+        for key in label.keys():
+            label[key] = cls.normalize_label(key, label[key])
 
-        for label_type in label_types:
-            value = label[label_type]
-            refined_label.append(cls.normalize_label(label_type, value))
-
-        label = np.array(refined_label)
+        label = np.array(label)
         label = torch.from_numpy(label).float()
 
         return label

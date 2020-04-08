@@ -6,9 +6,9 @@ from ....model import MoonView
 def load_cameras(moon_view: MoonView):
     device = torch.device('cuda')
 
-    eye = moon_view.eye.to_list()
-    at = moon_view.at.to_list()
-    up = moon_view.up.to_list()
+    eye = moon_view.eye
+    at = moon_view.at
+    up = moon_view.up
 
     R, T = look_at_view_transform(eye=((eye[0], eye[1], eye[2]),),
                                   at=((at[0], at[1], at[2]),),
