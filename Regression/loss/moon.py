@@ -1,6 +1,7 @@
 import torch
 from torch.nn import MSELoss, L1Loss
-from loss.spherical_transform import transform_spherical_angle_label, get_spherical_angle_constant_loss
+from .spherical_transform import transform_spherical_angle_label, get_spherical_angle_constant_loss
+from ..config import config
 
 
 class MoonLoss(torch.nn.Module):
@@ -15,13 +16,27 @@ class MoonLoss(torch.nn.Module):
         assert type_check or type_check_gpu
         assert predicts.shape == labels.shape
 
-        constant_loss = torch.tensor(0, dtype=torch.float)
+        mse_loss = get_mse_loss(predicts, labels.clone())
+        img_compare_loss = get_image_comparison_loss(predicts, labels)
 
-        if labels.shape[1] >= 3:
-            transform_spherical_angle_label(predicts, labels)
-            constant_loss = get_spherical_angle_constant_loss(predicts)
+        l_mse = config.network.l_mse
+        l_img_compare = config.network.l_image_comparison
 
-        mse_loss = MSELoss()(predicts, labels)
-        loss = torch.add(mse_loss, constant_loss)
+        return mse_loss * l_mse
 
-        return loss
+
+def get_mse_loss(predicts, labels):
+    constant_loss = torch.tensor(0, dtype=torch.float)
+
+    if labels.shape[1] >= 3:
+        transform_spherical_angle_label(predicts, labels)
+        constant_loss = get_spherical_angle_constant_loss(predicts)
+
+    mse_loss = MSELoss()(predicts, labels)
+    loss = torch.add(mse_loss, constant_loss)
+
+    return loss
+
+
+def get_image_comparison_loss(predicts, labels):
+    pass

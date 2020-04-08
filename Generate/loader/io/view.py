@@ -1,5 +1,5 @@
-from model import MoonView, Cartesian3DPoint
-from config import VIEW
+from ...model import MoonView, Cartesian3DPoint
+from ...config import VIEW
 
 
 class ViewEncoder:

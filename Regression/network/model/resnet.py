@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
-from config import config
+from ...config import config
 
 
 class BasicBlock(nn.Module):

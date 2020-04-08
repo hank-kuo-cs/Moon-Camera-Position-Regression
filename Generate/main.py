@@ -1,9 +1,10 @@
 import logging
 from tqdm import tqdm
-from loader import load_moon
-from dataset import DatasetWriter
-from renderer import OpenGLRenderer, Pytorch3DRenderer
-from config import DATA_NUM
+from .loader import load_moon
+from .dataset import DatasetWriter
+from .renderer import OpenGLRenderer
+from .renderer import Pytorch3DRenderer
+from .config import DATA_NUM
 
 
 def run_opengl(moon, dataset_writer):
@@ -48,5 +49,5 @@ if __name__ == '__main__':
 
     logging.info('Set up dataset writer...')
     dataset_writer = DatasetWriter(moon=moon)
-    # run_opengl(moon)
-    run_pytorch3d(moon, dataset_writer)
+    run_opengl(moon, dataset_writer)
+    # run_pytorch3d(moon, dataset_writer)

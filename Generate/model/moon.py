@@ -1,8 +1,8 @@
-from model.light import MoonLight
-from model.material import MoonMaterial
-from model.object import MoonObject
-from model.texture import MoonTexture
-from model.view import MoonView
+from .light import MoonLight
+from .material import MoonMaterial
+from .object import MoonObject
+from .texture import MoonTexture
+from .view import MoonView
 
 
 class Moon:

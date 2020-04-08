@@ -1,5 +1,5 @@
-from config import LIGHT
-from model import MoonLight
+from ...config import LIGHT
+from ...model import MoonLight
 
 
 class LightEncoder:

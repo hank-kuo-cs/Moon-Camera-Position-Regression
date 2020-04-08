@@ -1,10 +1,10 @@
 import cv2
 import pygame
 import numpy as np
-from config import WINDOW_WIDTH, WINDOW_HEIGHT
-from model.moon import Moon
-from renderer.OpenGL.scene import LightSetting, ViewSetting
-from renderer.OpenGL.material import MoonSetting, TextureSetting
+from ...config import WINDOW_WIDTH, WINDOW_HEIGHT
+from ...model import Moon
+from .scene import LightSetting, ViewSetting
+from .material import MoonSetting, TextureSetting
 from OpenGL.GL import glClear, glCallList, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT
 
 

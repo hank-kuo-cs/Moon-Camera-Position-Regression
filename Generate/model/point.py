@@ -1,5 +1,5 @@
 import numpy as np
-from model.vector import Cartesian3DVector
+from .vector import Cartesian3DVector
 
 
 class Spherical3DPoint:

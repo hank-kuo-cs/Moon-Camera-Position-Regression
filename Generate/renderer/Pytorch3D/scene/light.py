@@ -1,6 +1,6 @@
 import torch
-from pytorch3d.renderer import PointLights, DirectionalLights
-from model import MoonLight
+from ....pytorch3d.renderer import PointLights, DirectionalLights
+from ....model import MoonLight
 
 
 def load_lights(moon_light: MoonLight):

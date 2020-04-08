@@ -1,11 +1,12 @@
+import os
 import cv2
 import torch
 import numpy as np
-from pytorch3d.renderer import MeshRenderer, MeshRasterizer, TexturedSoftPhongShader
-from model import Moon
-from renderer.Pytorch3D.mesh import load_mesh
-from renderer.Pytorch3D.scene import load_lights, load_cameras, load_rasterization_setting
-from config import OBJECT_PATH
+from ...pytorch3d.renderer import MeshRenderer, MeshRasterizer, TexturedSoftPhongShader
+from ...model import Moon
+from .mesh import load_mesh
+from .scene import load_lights, load_cameras, load_rasterization_setting
+from ...config import OBJECT_PATH
 
 
 class Pytorch3DRenderer:
@@ -22,6 +23,9 @@ class Pytorch3DRenderer:
         self.device = torch.device('cuda')
 
     def set_mesh(self):
+        if not os.path.exists(OBJECT_PATH):
+            raise FileNotFoundError('Cannot find moon object from \'%s\'' % OBJECT_PATH)
+
         self.mesh = load_mesh(obj_path=OBJECT_PATH)
 
     def set_cameras(self, moon_view=None):

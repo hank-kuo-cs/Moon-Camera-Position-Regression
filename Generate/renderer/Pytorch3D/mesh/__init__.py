@@ -1,6 +1,6 @@
 import torch
-from pytorch3d.io import load_obj
-from pytorch3d.structures import Meshes, Textures
+from ....pytorch3d.io import load_obj
+from ....pytorch3d.structures import Meshes, Textures
 
 
 def load_mesh(obj_path):

@@ -1,6 +1,6 @@
 import torch
-from pytorch3d.renderer import look_at_view_transform, OpenGLPerspectiveCameras
-from model import MoonView
+from ....pytorch3d.renderer import look_at_view_transform, OpenGLPerspectiveCameras
+from ....model import MoonView
 
 
 def load_cameras(moon_view: MoonView):

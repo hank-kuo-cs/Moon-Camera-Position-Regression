@@ -1,11 +1,11 @@
 import os
-from model import Cartesian3DPoint, Spherical3DPoint
+from .model import Cartesian3DPoint, Spherical3DPoint
 # Window
 """
 Window size equals to your image size.
 """
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 800
+WINDOW_WIDTH = 100
+WINDOW_HEIGHT = 100
 
 # Data
 OBJECT_PATH = '../../data/Moon_8K.obj'
@@ -43,7 +43,7 @@ GL_UNIT_TO_KM = 1000
 KM_TO_GL_UNIT = 0.001
 
 # Dataset
-DATASET_PATH = '../../Dataset_test_pytorch3D'
+DATASET_PATH = '../../Dataset_test'
 DATA_NUM = 100
 GAMMA_RANGE = [1.0, 15.0]  # km
 IS_CHANGE_EYE = True

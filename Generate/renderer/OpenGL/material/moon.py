@@ -1,5 +1,5 @@
-from model import Moon
-from renderer.OpenGL.material.lib import *
+from ....model import Moon
+from .lib import *
 
 
 class MoonSetting:

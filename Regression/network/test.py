@@ -1,7 +1,7 @@
 import torch
 import numpy as np
-from network.network import Network
-from config import config
+from .network import Network
+from ..config import config
 from tqdm import tqdm
 
 

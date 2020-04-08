@@ -4,11 +4,11 @@ import logging
 from glob import glob
 from torch.utils.data import DataLoader
 
-from data import MoonDataset
-from loss import MoonLoss
-from network import ValidateNetwork, VGG19, ResNet18, ResNet34, ResNet50, DenseNet121, DenseNet161
-from tensorboard import TensorboardWriter
-from config import config
+from .data import MoonDataset
+from .loss import MoonLoss
+from .network import ValidateNetwork, VGG19, ResNet18, ResNet34, ResNet50, DenseNet121, DenseNet161
+from .tensorboard import TensorboardWriter
+from .config import config
 
 
 class Validating:

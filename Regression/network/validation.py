@@ -2,8 +2,8 @@ import torch
 import logging
 import numpy as np
 from tqdm import tqdm
-from network.network import Network
-from config import config
+from .network import Network
+from ..config import config
 
 
 class ValidateNetwork(Network):

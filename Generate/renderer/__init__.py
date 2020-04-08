@@ -1,3 +1,3 @@
-from renderer.OpenGL.renderer import OpenGLRenderer
-from renderer.Pytorch3D.renderer import Pytorch3DRenderer
+from .OpenGL import OpenGLRenderer
+from .Pytorch3D import Pytorch3DRenderer
 

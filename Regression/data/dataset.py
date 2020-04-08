@@ -3,8 +3,8 @@ import torch
 import numpy as np
 from torch.utils.data import Dataset
 from torchvision import transforms
-from data.loader import DatasetLoader
-from config import config
+from .loader import DatasetLoader
+from ..config import config
 
 
 class MoonDataset(Dataset):

@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy
-from model import MoonView, Spherical3DPoint
-from config import GL_UNIT_TO_KM, MOON_MAX_RADIUS_IN_GL_UNIT
+from ..model import MoonView, Spherical3DPoint
+from ..config import GL_UNIT_TO_KM, MOON_MAX_RADIUS_IN_GL_UNIT
 
 
 class LabelGenerator:

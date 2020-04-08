@@ -1,11 +1,12 @@
 import os
 import json
-from config.cuda import CudaConfig
-from config.dataset import DatasetConfig
-from config.network import NetworkConfig
-from config.tensorboard import TensorboardConfig
+from .cuda import CudaConfig
+from .dataset import DatasetConfig
+from .network import NetworkConfig
+from .tensorboard import TensorboardConfig
 
 
+# You have to comment below device setting code if you want to use parallel gpu.
 os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 
 
@@ -27,7 +28,9 @@ class Config:
                                      batch_size=10,
                                      epoch_num=300,
                                      learning_rate=0.001,
-                                     momentum=0.9)
+                                     momentum=0.9,
+                                     l_mse=1.0,
+                                     l_image_comparison=1.0)
 
         self.tensorboard = TensorboardConfig(tensorboard_path='',
                                              experiment_name='',

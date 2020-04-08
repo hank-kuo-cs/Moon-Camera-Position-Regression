@@ -3,10 +3,8 @@ import numpy as np
 import json
 from glob import glob
 import logging
-from loader import load_object, load_texture, load_material, load_view, load_light
-from model import Moon
-from renderer import Renderer
-from loader import load_moon
+from .loader import load_object, load_texture, load_material, load_view, load_light
+from .model import Moon
 
 
 def load_moon() -> Moon:

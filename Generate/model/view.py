@@ -1,4 +1,4 @@
-from model.point import Cartesian3DPoint
+from .point import Cartesian3DPoint
 
 
 class MoonView:

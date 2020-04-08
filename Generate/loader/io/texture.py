@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from model import MoonTexture
+from ...model import MoonTexture
 
 
 class TextureEncoder:

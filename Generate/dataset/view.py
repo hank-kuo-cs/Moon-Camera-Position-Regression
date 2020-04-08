@@ -1,7 +1,7 @@
 import numpy as np
-from loader import load_view
-from model import Cartesian3DPoint, Spherical3DPoint, MoonView, Cartesian3DVector
-from config import GAMMA_RANGE, MOON_MAX_RADIUS_IN_GL_UNIT, KM_TO_GL_UNIT, IS_CHANGE_EYE, IS_CHANGE_UP, IS_CHANGE_AT
+from ..loader import load_view
+from ..model import Cartesian3DPoint, Spherical3DPoint, MoonView, Cartesian3DVector
+from ..config import GAMMA_RANGE, MOON_MAX_RADIUS_IN_GL_UNIT, KM_TO_GL_UNIT, IS_CHANGE_EYE, IS_CHANGE_UP, IS_CHANGE_AT
 
 
 class RandomViewGenerator:

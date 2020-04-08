@@ -1,6 +1,7 @@
 import logging
-from network.network import Network
-from config import config
+from .network import Network
+from ...Generate.main import load_moon, Pytorch3DRenderer
+from ..config import config
 
 
 class TrainNetwork(Network):
@@ -48,3 +49,8 @@ class TrainNetwork(Network):
         self.avg_epoch_loss /= (config.dataset.train_dataset_num // config.network.batch_size)
         self.tensorboard.write_avg_epoch_loss(epoch=self._epoch, avg_epoch_loss=self.avg_epoch_loss)
         self.avg_epoch_loss = 0.0
+
+
+    def set_differential_renderer(self):
+        moon = load_moon()
+

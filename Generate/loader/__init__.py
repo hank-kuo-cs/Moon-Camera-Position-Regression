@@ -1,7 +1,6 @@
-# from config import OBJECT_PATH, MATERIAL_PATH, TEXTURE_PATH
-from config import *
-from model import Moon
-from loader.io import ObjectEncoder, MaterialEncoder, TextureEncoder, LightEncoder, ViewEncoder
+from ..config import *
+from ..model import Moon
+from .io import ObjectEncoder, MaterialEncoder, TextureEncoder, LightEncoder, ViewEncoder
 
 
 def load_moon() -> Moon:
@@ -19,6 +18,9 @@ def load_moon() -> Moon:
 
 
 def load_object():
+    if not os.path.exists(OBJECT_PATH):
+        raise FileNotFoundError('Cannot find moon object from \'%s\'' % OBJECT_PATH)
+
     object_encoder = ObjectEncoder(OBJECT_PATH)
     return object_encoder.load_object()
 

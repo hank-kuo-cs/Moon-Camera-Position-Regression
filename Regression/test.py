@@ -5,10 +5,10 @@ import argparse
 from glob import glob
 from torch.utils.data import DataLoader
 
-from data import MoonDataset
-from loss import MoonLoss
-from network import TestNetwork, VGG19, ResNet18, ResNet34, ResNet50, DenseNet121, DenseNet161
-from config import config
+from .data import MoonDataset
+from .loss import MoonLoss
+from .network import TestNetwork, VGG19, ResNet18, ResNet34, ResNet50, DenseNet121, DenseNet161
+from .config import config
 
 
 class Testing:

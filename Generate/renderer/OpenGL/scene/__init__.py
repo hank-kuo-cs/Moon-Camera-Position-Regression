@@ -1,2 +1,2 @@
-from renderer.OpenGL.scene.light import LightSetting
-from renderer.OpenGL.scene.view import ViewSetting
+from .light import LightSetting
+from .view import ViewSetting
