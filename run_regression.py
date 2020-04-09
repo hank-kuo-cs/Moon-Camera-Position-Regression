@@ -7,5 +7,13 @@ if __name__ == '__main__':
                          '\npython run_regression.py <mode>' +
                          '\n<mode>: train, test or validate')
 
-    if sys.argv[1] not in ['train', 'test', 'validate']:
-        raise ValueError('Mode must be "train", "test" or "validate"')
+    mode = sys.argv[1]
+
+    if mode == 'train':
+        train()
+    elif mode == 'test':
+        test()
+    elif mode == 'validate':
+        validate()
+    else:
+        raise ValueError('Mode must be "train", "test" or "validate", but get"%s"' % mode)
