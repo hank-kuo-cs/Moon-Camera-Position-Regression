@@ -1,7 +1,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All rights reserved.
 
 import torch
-from pytorch3d import _C
+from ...pytorch3d import _C
 
 
 def knn_points_idx(

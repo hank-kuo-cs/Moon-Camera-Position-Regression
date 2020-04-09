@@ -12,7 +12,7 @@ import numpy as np
 import torch
 from fvcore.common.file_io import PathManager
 from PIL import Image
-from pytorch3d.structures import Meshes, Textures, join_meshes_as_batch
+from ..structures import Meshes, Textures, join_meshes_as_batch
 
 
 def _make_tensor(data, cols: int, dtype: torch.dtype) -> torch.Tensor:

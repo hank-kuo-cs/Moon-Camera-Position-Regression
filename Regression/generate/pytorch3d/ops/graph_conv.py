@@ -3,7 +3,7 @@
 
 import torch
 import torch.nn as nn
-from pytorch3d import _C
+from ...pytorch3d import _C
 from torch.autograd import Function
 from torch.autograd.function import once_differentiable
 

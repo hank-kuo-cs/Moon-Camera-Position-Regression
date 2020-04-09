@@ -2,7 +2,7 @@
 
 import torch
 import torch.nn.functional as F
-from pytorch3d.ops.nearest_neighbor_points import nn_points_idx
+from ..ops.nearest_neighbor_points import nn_points_idx
 
 
 def _validate_chamfer_reduction_inputs(batch_reduction: str, point_reduction: str):
