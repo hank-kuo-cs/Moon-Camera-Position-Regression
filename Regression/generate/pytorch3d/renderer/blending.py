@@ -16,7 +16,7 @@ import torch
 class BlendParams(NamedTuple):
     sigma: float = 1e-4
     gamma: float = 1e-4
-    background_color: Sequence = (1.0, 1.0, 1.0)
+    background_color: Sequence = (0.0, 0.0, 0.0)
 
 
 def hard_rgb_blend(colors, fragments) -> torch.Tensor:
