@@ -34,9 +34,9 @@ def interpolate_texture_map(fragments, meshes) -> torch.Tensor:
         texels: tensor of shape (N, H, W, K, C) giving the interpolated
         texture for each pixel in the rasterized image.
     """
-    if not isinstance(meshes.textures, Textures):
-        msg = "Expected meshes.textures to be an instance of Textures; got %r"
-        raise ValueError(msg % type(meshes.textures))
+    # if not isinstance(meshes.textures, Textures):
+    #     msg = "Expected meshes.textures to be an instance of Textures; got %r"
+    #     raise ValueError(msg % type(meshes.textures))
 
     faces_uvs = meshes.textures.faces_uvs_packed()
     verts_uvs = meshes.textures.verts_uvs_packed()
