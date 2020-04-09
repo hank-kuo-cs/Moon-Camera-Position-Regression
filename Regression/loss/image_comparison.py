@@ -10,7 +10,7 @@ from ..generate.config import MOON_MAX_RADIUS_IN_GL_UNIT, KM_TO_GL_UNIT
 
 def get_image_comparison_loss(renderer: Pytorch3DRenderer, predicts, labels):
     batch_size = config.network.batch_size
-    img_compare_loss = torch.zeros((batch_size, 1), dtype=torch.float)
+    arr = []
     labels = labels.clone()
 
     predict_cameras, label_cameras = transform_regress_variables_to_cameras(predicts, labels)
@@ -23,10 +23,12 @@ def get_image_comparison_loss(renderer: Pytorch3DRenderer, predicts, labels):
         label_img = renderer.render_image()
 
         l1_loss = L1Loss()(predict_img, label_img)
-        l1_loss_normalize_by_batch = torch.div(l1_loss, batch_size)
-        img_compare_loss[i] = l1_loss_normalize_by_batch
+        l1_loss_normalized_by_batch = torch.div(l1_loss, batch_size)
+        arr.append(l1_loss_normalized_by_batch)
 
-    return img_compare_loss.sum()
+    img_compare_loss = torch.sum(torch.stack(arr))
+
+    return img_compare_loss
 
 
 def transform_regress_variables_to_cameras(predicts, labels):
