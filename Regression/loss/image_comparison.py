@@ -21,9 +21,9 @@ def get_image_comparison_loss(renderer: Pytorch3DRenderer, predicts, labels):
         renderer.set_cameras(label_cameras[i])
         label_img = renderer.render_image()
 
-        img_compare_loss += L1Loss()(predict_img, label_img)
+        img_compare_loss = img_compare_loss + L1Loss()(predict_img, label_img)
 
-    img_compare_loss /= config.network.batch_size
+    img_compare_loss = img_compare_loss / config.network.batch_size
 
     return img_compare_loss
 
