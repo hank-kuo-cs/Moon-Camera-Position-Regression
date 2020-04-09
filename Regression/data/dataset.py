@@ -60,13 +60,14 @@ class MoonDataset(Dataset):
 
     @classmethod
     def refine_label(cls, label: dict):
+        refined_label = []
         for key in label.keys():
-            label[key] = cls.normalize_label(key, label[key])
+            refined_label.append(cls.normalize_label(key, label[key]))
 
-        label = np.array(label)
-        label = torch.from_numpy(label).float()
+        refined_label = np.array(refined_label)
+        refined_label = torch.from_numpy(refined_label).float()
 
-        return label
+        return refined_label
 
     @classmethod
     def normalize_label(cls, label_type, value):
