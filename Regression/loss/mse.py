@@ -17,8 +17,8 @@ def get_mse_loss(predicts, labels):
     predicts[:, 0] = torch.div(predicts[:, 0], MOON_MAX_RADIUS_IN_GL_UNIT + (config.dataset.dist_range * KM_TO_GL_UNIT))
     labels[:, 0] = torch.div(labels[:, 0], MOON_MAX_RADIUS_IN_GL_UNIT + (config.dataset.dist_range * KM_TO_GL_UNIT))
 
-    predicts[:, 3:] = torch.div(predicts[:, 3:], config.dataset.normalize_point_weight)
-    labels[:, 3:] = torch.div(labels[:, 3:], config.dataset.normalize_point_weight)
+    predicts[:, 3:] = torch.div(predicts[:, 3:], config.dataset.normalize_point_weight * KM_TO_GL_UNIT)
+    labels[:, 3:] = torch.div(labels[:, 3:], config.dataset.normalize_point_weight * KM_TO_GL_UNIT)
 
     mse_loss = MSELoss()(predicts, labels)
     loss = torch.add(mse_loss, constant_loss)
