@@ -2,7 +2,7 @@ import os
 import cv2
 import torch
 import numpy as np
-from ...pytorch3d.renderer import MeshRenderer, MeshRasterizer, TexturedSoftPhongShader
+from pytorch3d.renderer import MeshRenderer, MeshRasterizer, TexturedSoftPhongShader
 from ...model import Moon
 from .mesh import load_mesh
 from .scene import load_lights, load_cameras, load_rasterization_setting
