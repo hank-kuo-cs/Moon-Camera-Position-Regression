@@ -1,5 +1,5 @@
 import torch
-from ....pytorch3d.renderer import PointLights, DirectionalLights
+from pytorch3d.renderer import PointLights, DirectionalLights
 from ....model import MoonLight
 
 

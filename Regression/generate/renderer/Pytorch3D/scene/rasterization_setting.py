@@ -1,4 +1,4 @@
-from ....pytorch3d.renderer import RasterizationSettings
+from pytorch3d.renderer import RasterizationSettings
 from ....config import WINDOW_WIDTH, WINDOW_HEIGHT
 
 
