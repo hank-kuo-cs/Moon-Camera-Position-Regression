@@ -12,7 +12,7 @@ def get_image_comparison_loss(renderer: Pytorch3DRenderer, predicts, labels):
     batch_size = config.network.batch_size
     arr = []
 
-    predict_cameras, label_cameras = transform_regress_variables_to_cameras(predicts.clone(), labels.clone())
+    predict_cameras, label_cameras = transform_regress_variables_to_cameras(predicts, labels)
 
     for i in range(batch_size):
         renderer.set_cameras(predict_cameras[i])
