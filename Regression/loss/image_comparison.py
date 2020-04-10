@@ -11,9 +11,8 @@ from ..generate.config import MOON_MAX_RADIUS_IN_GL_UNIT, KM_TO_GL_UNIT
 def get_image_comparison_loss(renderer: Pytorch3DRenderer, predicts, labels):
     batch_size = config.network.batch_size
     arr = []
-    labels = labels.clone()
 
-    predict_cameras, label_cameras = transform_regress_variables_to_cameras(predicts, labels)
+    predict_cameras, label_cameras = transform_regress_variables_to_cameras(predicts.clone(), labels.clone())
 
     for i in range(batch_size):
         renderer.set_cameras(predict_cameras[i])
