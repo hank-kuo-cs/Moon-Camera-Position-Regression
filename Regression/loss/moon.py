@@ -2,6 +2,7 @@ import torch
 from torch.nn import L1Loss, MSELoss
 from ..config import config
 from .differential_renderer import DifferentialRenderer
+from .mse import get_mse_loss
 
 
 class MoonLoss(torch.nn.Module):
@@ -15,7 +16,12 @@ class MoonLoss(torch.nn.Module):
         assert type_check or type_check_gpu
 
         img_compare_loss = self.get_img_compare_loss(predicts, labels)
-        return img_compare_loss
+        mse_loss = get_mse_loss(predicts, labels)
+
+        l_mse = config.network.l_mse
+        l_img = config.network.l_image_comparison
+
+        return l_img * img_compare_loss + l_mse * mse_loss
 
     def get_img_compare_loss(self, predicts, labels):
         batch_size = config.network.batch_size
