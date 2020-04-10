@@ -60,7 +60,7 @@ def transform_regress_variables_to_cameras(predicts, labels):
         if label_num == 1:
             predict_cameras[i].eye = transform_spherical_to_cartesian([predicts[i, 0], labels[i, 1], labels[i, 2]])
         else:
-            predict_cameras[i].eye = transform_spherical_to_cartesian(predicts[i, :3])
+            predict_cameras[i].eye = transform_spherical_to_cartesian([predicts[i, 0], predicts[i, 1], predicts[i, 2]])
         label_cameras[i].eye = transform_spherical_to_cartesian(labels[i, :3])
 
         # at
