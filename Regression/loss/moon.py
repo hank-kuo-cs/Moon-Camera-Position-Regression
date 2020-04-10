@@ -22,8 +22,8 @@ class MoonLoss(torch.nn.Module):
         self.predicts = predicts
         self.labels = labels
 
-        mse_loss = get_mse_loss(predicts, labels)
-        img_compare_loss = get_image_comparison_loss(renderer=self.renderer, predicts=predicts, labels=labels)
+        mse_loss = get_mse_loss(predicts.clone(), labels.clone())
+        img_compare_loss = get_image_comparison_loss(renderer=self.renderer, predicts=predicts.clone(), labels=labels.clone())
 
         l_mse = config.network.l_mse
         l_img_compare = config.network.l_image_comparison
