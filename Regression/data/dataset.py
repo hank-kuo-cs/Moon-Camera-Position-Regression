@@ -3,18 +3,19 @@ import torch
 import numpy as np
 from torch.utils.data import Dataset
 from torchvision import transforms
-from data.loader import DatasetLoader
-from config import config
+from .loader import DatasetLoader
+from ..config import config
 
 
 class MoonDataset(Dataset):
     def __init__(self, data_type: str):
-        data_types = ['train', 'test', 'validation']
-        assert data_type in data_types
+        assert data_type in ['train', 'test', 'validation']
+
         self.dataset_loader = DatasetLoader(data_type)
 
     def __len__(self):
         assert len(self.dataset_loader.images_path) == len(self.dataset_loader.labels)
+
         return len(self.dataset_loader.images_path)
 
     def __getitem__(self, item):
@@ -58,18 +59,15 @@ class MoonDataset(Dataset):
         return image
 
     @classmethod
-    def refine_label(cls, label):
+    def refine_label(cls, label: dict):
         refined_label = []
-        label_types = config.dataset.labels
+        for key in label.keys():
+            refined_label.append(cls.normalize_label(key, label[key]))
 
-        for label_type in label_types:
-            value = label[label_type]
-            refined_label.append(cls.normalize_label(label_type, value))
+        refined_label = np.array(refined_label)
+        refined_label = torch.from_numpy(refined_label).float()
 
-        label = np.array(refined_label)
-        label = torch.from_numpy(label).float()
-
-        return label
+        return refined_label
 
     @classmethod
     def normalize_label(cls, label_type, value):

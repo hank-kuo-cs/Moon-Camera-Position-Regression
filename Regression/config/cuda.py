@@ -52,9 +52,9 @@ class CudaConfig:
 
     def set_cuda_device(self):
         return
-        if self.device == 'cuda':
-            os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
-            os.environ['CUDA_VISIBLE_DEVICES'] = str(self.cuda_device_number)
+        # if self.device == 'cuda':
+        #     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
+        #     os.environ['CUDA_VISIBLE_DEVICES'] = str(self.cuda_device_number)
 
     def check_parameters(self):
         assert self.device == 'cuda' or 'cpu'

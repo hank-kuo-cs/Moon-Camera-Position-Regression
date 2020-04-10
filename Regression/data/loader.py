@@ -1,7 +1,7 @@
 import os
 import json
 from glob import glob
-from config import config
+from ..config import config
 
 
 class DatasetLoader:

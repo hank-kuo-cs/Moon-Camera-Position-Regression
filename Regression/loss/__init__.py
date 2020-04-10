@@ -1,1 +1,1 @@
-from loss.moon import MoonLoss
+from .moon import MoonLoss

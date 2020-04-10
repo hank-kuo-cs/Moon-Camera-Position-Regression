@@ -1,1 +1,1 @@
-from data.dataset import MoonDataset
+from .dataset import MoonDataset

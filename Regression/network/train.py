@@ -1,6 +1,6 @@
 import logging
-from network.network import Network
-from config import config
+from .network import Network
+from ..config import config
 
 
 class TrainNetwork(Network):

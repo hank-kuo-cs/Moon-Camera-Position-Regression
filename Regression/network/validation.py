@@ -2,8 +2,8 @@ import torch
 import logging
 import numpy as np
 from tqdm import tqdm
-from network.network import Network
-from config import config
+from .network import Network
+from ..config import config
 
 
 class ValidateNetwork(Network):
@@ -21,16 +21,17 @@ class ValidateNetwork(Network):
     def run_one_epoch(self):
         self.model.eval()
 
-        for idx, (inputs, labels) in tqdm(enumerate(self.get_data())):
-            predicts = self.model(inputs)
+        with torch.no_grad():
+            for idx, (inputs, labels) in tqdm(enumerate(self.get_data())):
+                predicts = self.model(inputs)
 
-            predicts, labels = self.transform_spherical_angle_label(predicts, labels)
+                predicts, labels = self.transform_spherical_angle_label(predicts, labels)
 
-            self.add_predicts(predicts)
-            self.add_labels(labels)
+                self.add_predicts(predicts)
+                self.add_labels(labels)
 
-            loss = self.loss_func(predicts, labels)
-            self.avg_epoch_loss += loss.item()
+                loss = self.loss_func(predicts, labels)
+                self.avg_epoch_loss += loss.item()
 
         self.write_epoch_loss()
         self.normalize_predicts_and_labels()

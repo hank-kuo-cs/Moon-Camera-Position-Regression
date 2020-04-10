@@ -1,9 +1,13 @@
 import os
 import json
-from config.cuda import CudaConfig
-from config.dataset import DatasetConfig
-from config.network import NetworkConfig
-from config.tensorboard import TensorboardConfig
+from .cuda import CudaConfig
+from .dataset import DatasetConfig
+from .network import NetworkConfig
+from .tensorboard import TensorboardConfig
+
+
+# You have to comment below device setting code if you want to use parallel gpu.
+os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 
 
 class Config:
@@ -13,21 +17,23 @@ class Config:
                                cuda_device_number=0,
                                parallel_gpus=[0, 2, 3])
 
-        self.dataset = DatasetConfig(dataset_path='/data/space/Dataset_fix_up_100km',
-                                     labels=['dist', 'c_theta', 'c_phi', 'p_x', 'p_y', 'p_z', 'u_x', 'u_y', 'u_z'],
+        self.dataset = DatasetConfig(dataset_path='',
+                                     labels=['dist', 'c_theta', 'c_phi'],
                                      dataset_size={'train': 80000, 'test': 10000, 'validation': 10000},
                                      sub_dataset_size=10000,
-                                     dist_range=100.0,   # km
+                                     dist_range=15.0,   # km
                                      normalize_point_weight=2000.0)
 
-        self.network = NetworkConfig(network_model='VGG19',
+        self.network = NetworkConfig(network_model='ResNet18',
                                      batch_size=10,
                                      epoch_num=300,
                                      learning_rate=0.001,
-                                     momentum=0.9)
+                                     momentum=0.9,
+                                     l_mse=1.0,
+                                     l_image_comparison=1.0)
 
-        self.tensorboard = TensorboardConfig(tensorboard_path='/home/hank/Tensorboard',
-                                             experiment_name='E5_fix_up_100km',
+        self.tensorboard = TensorboardConfig(tensorboard_path='',
+                                             experiment_name='',
                                              loss_step=100,
                                              tsne_epoch_step=50,
                                              is_write_loss=True,

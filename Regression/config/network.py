@@ -4,13 +4,17 @@ class NetworkConfig:
                  batch_size: int = 20,
                  epoch_num: int = 300,
                  learning_rate: float = 0.001,
-                 momentum: float = 0.9):
+                 momentum: float = 0.9,
+                 l_mse: float = 1.0,
+                 l_image_comparison: float = 1.0):
 
         self._network_model = network_model
         self._epoch_num = epoch_num
         self._batch_size = batch_size
         self._learning_rate = learning_rate
         self._momentum = momentum
+        self._l_mse = l_mse
+        self._l_image_comparison = l_image_comparison
 
         self.check_parameters()
 
@@ -34,9 +38,19 @@ class NetworkConfig:
     def momentum(self):
         return self._momentum
 
+    @property
+    def l_mse(self):
+        return self._l_mse
+
+    @property
+    def l_image_comparison(self):
+        return self._l_image_comparison
+
     def check_parameters(self):
         assert isinstance(self._network_model, str)
         assert isinstance(self._batch_size, int)
         assert isinstance(self._epoch_num, int)
         assert isinstance(self._learning_rate, float)
         assert isinstance(self._momentum, float)
+        assert isinstance(self._l_mse, float)
+        assert isinstance(self._l_image_comparison, float)

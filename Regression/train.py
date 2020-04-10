@@ -1,3 +1,4 @@
+import os
 import re
 import torch
 import logging
@@ -5,17 +6,17 @@ import argparse
 from glob import glob
 from torch.utils.data import DataLoader
 
-from data import MoonDataset
-from loss import MoonLoss
-from network import TrainNetwork, Resnet18, VGG19
-from tensorboard import TensorboardWriter
-from config import config
+from .data import MoonDataset
+from .loss import MoonLoss
+from .network import TrainNetwork, VGG19, ResNet18, ResNet34, ResNet50, DenseNet121, DenseNet161
+from .tensorboard import TensorboardWriter
+from .config import config
 
 
 class Training:
     def __init__(self, args, data_loader):
         self._is_scratch = False
-        self._pretrain_model_path = ''
+        self._epoch_of_pretrain = ''
         self._epoch = 1
         self.set_arguments(args)
 
@@ -33,7 +34,7 @@ class Training:
 
     def set_arguments(self, args):
         self._is_scratch = args.scratch
-        self._pretrain_model_path = args.pretrain_model
+        self._epoch_of_pretrain = args.epoch_of_pretrain
 
     def set_network(self):
         self.network = TrainNetwork(model=self.model,
@@ -45,7 +46,9 @@ class Training:
 
     def set_model(self):
         image_size = self.data_loader.dataset[0][0].size()[1]
-        models = {'VGG19': VGG19, 'Resnet18': Resnet18}
+        models = {'VGG19': VGG19,
+                  'ResNet18': ResNet18, 'ResNet34': ResNet34, 'ResNet50': ResNet50,
+                  'DenseNet121': DenseNet121, 'DenseNet161': DenseNet161}
         self.model = models[config.network.network_model](image_size=image_size)
 
         self.set_model_gpu()
@@ -61,7 +64,7 @@ class Training:
         self.model = self.model.to(config.cuda.device)
 
     def set_model_pretrain(self):
-        if self._pretrain_model_path and self._is_scratch:
+        if self._epoch_of_pretrain and self._is_scratch:
             raise ValueError('Cannot use both argument \'pretrain_model\' and \'scratch\'!')
 
         model_path = self.get_pretrain_model_path()
@@ -73,11 +76,13 @@ class Training:
             logging.info('Train from scratch')
 
     def get_pretrain_model_path(self):
-        model_path = self._pretrain_model_path
+        epoch_of_pretrain = self._epoch_of_pretrain
 
-        if not model_path:
-            pretrain_model_paths = glob('./checkpoint/model*')
+        if not epoch_of_pretrain:
+            pretrain_model_paths = glob('%s/model*' % self.checkpoint_path)
             model_path = sorted(pretrain_model_paths)[-1] if pretrain_model_paths else None
+        else:
+            model_path = '%s/model_epoch%.3d.pth' % (self.checkpoint_path, int(epoch_of_pretrain))
 
         return model_path
 
@@ -89,6 +94,12 @@ class Training:
         if epoch_num_str:
             return int(epoch_num_str[0])
         raise ValueError('Cannot find epoch number in the model path: %s' % model_path)
+
+    @property
+    def checkpoint_path(self):
+        file_path = os.path.abspath(__file__)
+        dir_path = os.path.dirname(file_path)
+        return os.path.join(dir_path, 'checkpoint')
 
     @property
     def loss_func(self):
@@ -105,13 +116,15 @@ class Training:
         return TensorboardWriter(dataset_type='train')
 
 
-if __name__ == '__main__':
+def train():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%m-%d %H:%M:%S')
     config.print_config()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-pm', '--pretrain_model', type=str, help='Use a pretrain model in checkpoint directory to continue training')
-    parser.add_argument('-s', '--scratch', action='store_true', help='Train model from scratch, do not use pretrain model')
+    parser.add_argument('-e', '--epoch_of_pretrain', type=str,
+                        help='Use a pretrain model in checkpoint directory to continue training')
+    parser.add_argument('-s', '--scratch', action='store_true',
+                        help='Train model from scratch, do not use pretrain model')
 
     arguments = parser.parse_args()
 

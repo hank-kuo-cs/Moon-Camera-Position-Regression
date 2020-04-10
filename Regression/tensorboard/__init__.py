@@ -1,6 +1,6 @@
 import numpy as np
-from tensorboard.loss import LossWriter
-from config import config
+from .loss import LossWriter
+from ..config import config
 
 
 class TensorboardWriter:

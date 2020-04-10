@@ -1,5 +1,5 @@
 import torch
-from config import config
+from ..config import config
 
 
 def transform_spherical_angle_label(predicts, labels):

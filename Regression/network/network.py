@@ -1,6 +1,6 @@
 import os
 import torch
-from config import config
+from ..config import config
 
 
 class Network:
