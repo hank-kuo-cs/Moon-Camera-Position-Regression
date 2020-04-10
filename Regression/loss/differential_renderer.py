@@ -20,9 +20,15 @@ class DifferentialRenderer:
         self.set_renderer()
 
     def render_image(self, cameras):
-        x, y, z = self.transform_spherical_to_cartesian(cameras[0], cameras[1], cameras[2])
+        # x, y, z = self.transform_spherical_to_cartesian(cameras[0], cameras[1], cameras[2])
 
-        R, T = look_at_view_transform(eye=((x, y, z),),
+        # R, T = look_at_view_transform(eye=((x, y, z),),
+        #                               at=((cameras[3], cameras[4], cameras[5]),),
+        #                               up=((cameras[6], cameras[7], cameras[8]),),
+        #                               device=self.cuda_device)
+        R, T = look_at_view_transform(dist=cameras[0],
+                                      elev=cameras[1],
+                                      azim=cameras[2],
                                       at=((cameras[3], cameras[4], cameras[5]),),
                                       up=((cameras[6], cameras[7], cameras[8]),),
                                       device=self.cuda_device)
