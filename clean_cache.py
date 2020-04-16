@@ -16,4 +16,4 @@ def recursive_travel_all_directories(dir_path):
 
 
 recursive_travel_all_directories('./')
-os.system('rm -rf Regression/generate/.idea')
+os.system('rm -rf .idea')
