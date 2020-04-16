@@ -42,7 +42,7 @@ def run_pytorch3d(moon, dataset_writer):
         dataset_writer.write_data(image=img_data, moon=renderer.moon)
 
 
-if __name__ == '__main__':
+def generate_dataset():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%m-%d %H:%M:%S')
 
     logging.info('Load moon file...')
@@ -50,5 +50,4 @@ if __name__ == '__main__':
 
     logging.info('Set up dataset writer...')
     dataset_writer = DatasetWriter(moon=moon)
-    run_opengl(moon, dataset_writer)
-    # run_pytorch3d(moon, dataset_writer)
+    run_pytorch3d(moon, dataset_writer)

@@ -4,6 +4,7 @@ import numpy as np
 from torch.utils.data import Dataset
 from torchvision import transforms
 from .loader import DatasetLoader
+from ..generate.config import GL_UNIT_TO_KM, KM_TO_GL_UNIT, MOON_MAX_RADIUS_IN_GL_UNIT
 from ..config import config
 
 
@@ -86,12 +87,12 @@ class MoonDataset(Dataset):
 
     @staticmethod
     def normalize_dist(dist):
-        return dist / config.dataset.dist_range
+        return dist * KM_TO_GL_UNIT + MOON_MAX_RADIUS_IN_GL_UNIT
 
     @staticmethod
     def normalize_angle(angle):
-        return angle / (np.pi * 2)
+        return angle
 
     @staticmethod
     def normalize_point(point):
-        return point / config.dataset.normalize_point_weight
+        return point * KM_TO_GL_UNIT
