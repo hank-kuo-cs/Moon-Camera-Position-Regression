@@ -1,16 +1,14 @@
 import torch
 from pytorch3d.renderer import look_at_view_transform, OpenGLPerspectiveCameras
-from ....model import MoonView
+from .....config import config
 
 
-def load_cameras(moon_view: MoonView):
+def load_cameras(dist, elev, azim, at, up):
     device = torch.device('cuda')
 
-    eye = moon_view.eye
-    at = moon_view.at
-    up = moon_view.up
-
-    R, T = look_at_view_transform(eye=((eye[0], eye[1], eye[2]),),
+    R, T = look_at_view_transform(dist=dist,
+                                  elev=elev,
+                                  azim=azim,
                                   at=((at[0], at[1], at[2]),),
                                   up=((up[0], up[1], up[2]),))
 
@@ -18,6 +16,6 @@ def load_cameras(moon_view: MoonView):
                                     R=R,
                                     T=T,
                                     degrees=True,
-                                    fov=moon_view.fov,
-                                    znear=moon_view.znear,
-                                    zfar=moon_view.zfar)
+                                    fov=config.generate.fov,
+                                    znear=config.generate.znear,
+                                    zfar=config.generate.zfar)

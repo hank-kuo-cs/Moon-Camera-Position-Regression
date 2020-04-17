@@ -1,17 +1,10 @@
-import torch
-from pytorch3d.renderer import PointLights, DirectionalLights
-from ....model import MoonLight
+from pytorch3d.renderer import DirectionalLights
+from .....config import config
 
 
-def load_lights(moon_light: MoonLight):
-    device = torch.device('cuda')
-    direction = moon_light.position_light[:3]
-    ambient_color = moon_light.ambient_light[: 3]
-    diffuse_color = moon_light.diffuse_light[: 3]
-    specular_color = (0.0, 0.0, 0.0)
-
-    return DirectionalLights(device=device,
-                             direction=(direction,),
-                             ambient_color=(ambient_color,),
-                             diffuse_color=(diffuse_color,),
-                             specular_color=(specular_color,))
+def load_lights():
+    return DirectionalLights(device=config.cuda.device,
+                             direction = ((-40.0, 200.0, 100.0),),
+                             ambient_color=((0.5, 0.5, 0.5),),
+                             diffuse_color=((0.5, 0.5, 0.5),),
+                             specular_color=((0.0, 0.0, 0.0),))

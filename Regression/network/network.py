@@ -49,7 +49,7 @@ class Network:
     @property
     def data_loader(self):
         if self.data_loader is None:
-            raise ValueError('Data loader of network is empty!')
+            raise ValueError('Data backup of network is empty!')
         return self.data_loader
 
     @property

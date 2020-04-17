@@ -2,12 +2,9 @@ import os
 import json
 from .cuda import CudaConfig
 from .dataset import DatasetConfig
+from .generate import GenerateConfig
 from .network import NetworkConfig
 from .tensorboard import TensorboardConfig
-
-
-# You have to comment below device setting code if you want to use parallel gpu.
-os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 
 
 class Config:
@@ -17,14 +14,26 @@ class Config:
                                cuda_device_number=0,
                                parallel_gpus=[0, 2, 3])
 
-        self.dataset = DatasetConfig(dataset_path='',
+        self.dataset = DatasetConfig(dataset_path='/data/space/Dataset_15km_only_c_20w',
                                      labels=['dist', 'c_theta', 'c_phi'],
-                                     dataset_size={'train': 80000, 'test': 10000, 'validation': 10000},
-                                     sub_dataset_size=10000,
-                                     dist_range=15.0,   # km
+                                     dataset_size={'train': 160000, 'test': 20000, 'validation': 20000},
+                                     sub_dataset_size=20000,
                                      normalize_point_weight=2000.0)
 
-        self.network = NetworkConfig(network_model='ResNet18',
+        self.generate = GenerateConfig(moon_obj_path='/data/space/moon_object/Moon_8K.obj',
+                                       image_size=400,
+                                       fov=120,
+                                       znear=0.0001,
+                                       zfar=1000.0,
+                                       moon_radius_gl=1.7459008620440053,
+                                       gl_to_km=1000.0,
+                                       dist_between_moon_low_bound_km=1.0,
+                                       dist_between_moon_high_bound_km=15.0,
+                                       is_change_eye=True,
+                                       is_change_at=False,
+                                       is_change_up=False)
+
+        self.network = NetworkConfig(network_model='VGG19',
                                      batch_size=10,
                                      epoch_num=300,
                                      learning_rate=0.001,
@@ -65,3 +74,6 @@ class Config:
 
 
 config = Config()
+
+if config.cuda.device == 'cuda' and not config.cuda.is_parallel:
+    os.environ['CUDA_VISIBLE_DEVICES'] = str(config.cuda.cuda_device_number)

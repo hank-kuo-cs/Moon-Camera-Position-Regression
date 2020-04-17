@@ -1,10 +1,16 @@
+import os
 import torch
 from pytorch3d.io import load_obj
 from pytorch3d.structures import Meshes, Textures
+from .....config import config
 
 
-def load_mesh(obj_path):
-    device = torch.device('cuda')
+def load_mesh():
+    device = torch.device(config.cuda.device)
+
+    obj_path = config.generate.moon_obj_path
+    if not os.path.exists(obj_path):
+        raise FileNotFoundError('Cannot find moon object from \'%s\'' % obj_path)
 
     vertices, faces, aux = load_obj(obj_path)
 

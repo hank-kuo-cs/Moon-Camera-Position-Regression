@@ -3,7 +3,7 @@ import numpy as np
 from copy import deepcopy
 from torch.nn import L1Loss
 from ..generate.main import Pytorch3DRenderer
-from ..generate.loader import load_view
+from ..generate.backup import load_view
 from ..config import config
 from ..generate.config import MOON_MAX_RADIUS_IN_GL_UNIT, KM_TO_GL_UNIT
 
