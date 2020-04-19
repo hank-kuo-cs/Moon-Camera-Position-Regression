@@ -89,7 +89,9 @@ class MoonDataset(Dataset):
 
     @staticmethod
     def normalize_dist(dist):
-        return (dist - config.generate.moon_radius_gl) / config.generate.dist_high_gl
+        dist = (dist - config.generate.moon_radius_gl)
+        dist /= config.generate.dist_between_moon_high_bound_km * config.generate.km_to_gl
+        return dist
 
     @staticmethod
     def normalize_elev(elev):

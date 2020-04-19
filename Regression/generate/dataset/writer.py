@@ -139,8 +139,9 @@ class DatasetWriter:
 
     @staticmethod
     def pyr_down_image(image):
-        if image.shape[0] > 600:
-            image = cv2.pyrDown(image)
+        img_size = config.generate.image_size
+        if image.shape[0] > img_size:
+            image = cv2.pyrDown(image, dstsize=(img_size, img_size))
         return image
 
     @staticmethod

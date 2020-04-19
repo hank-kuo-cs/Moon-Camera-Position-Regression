@@ -65,7 +65,7 @@ class DatasetConfig:
         assert isinstance(self._sub_dataset_size, int)
         assert isinstance(self._normalize_point_weight, float)
 
-        labels = ['dist', 'c_theta', 'c_phi', 'p_x', 'p_y', 'p_z', 'u_x', 'u_y', 'u_z']
+        labels = ['dist', 'elev', 'azim', 'p_x', 'p_y', 'p_z', 'u_x', 'u_y', 'u_z']
 
         for l in self._labels:
             assert l in labels

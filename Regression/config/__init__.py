@@ -9,18 +9,18 @@ from .tensorboard import TensorboardConfig
 
 class Config:
     def __init__(self):
-        self.cuda = CudaConfig(device='cpu',
+        self.cuda = CudaConfig(device='cuda',
                                is_parallel=False,
-                               cuda_device_number=0,
+                               cuda_device_number=3,
                                parallel_gpus=[0, 2, 3])
 
-        self.dataset = DatasetConfig(dataset_path='/Users/hank/Desktop/Dataset_test',
+        self.dataset = DatasetConfig(dataset_path='/data/space/pytorch3d/Dataset_only_eye_15km_20w',
                                      labels=['dist', 'elev', 'azim'],
-                                     dataset_size={'train': 800, 'test': 100, 'validation': 100},
-                                     sub_dataset_size=100,
+                                     dataset_size={'train': 160000, 'test': 20000, 'validation': 20000},
+                                     sub_dataset_size=20000,
                                      normalize_point_weight=0.5)
 
-        self.generate = GenerateConfig(moon_obj_path='/Users/hank/Desktop/data/Moon_8K.obj',
+        self.generate = GenerateConfig(moon_obj_path='/data/space/pytorch3d/moon_data/Moon_8K.obj',
                                        image_size=400,
                                        fov=120,
                                        znear=0.0001,
@@ -41,12 +41,12 @@ class Config:
                                      l_mse=1.0,
                                      l_image_comparison=1.0)
 
-        self.tensorboard = TensorboardConfig(tensorboard_path='/Users/hank/Desktop/Tensorboard',
-                                             experiment_name='test',
-                                             loss_step=10,
-                                             tsne_epoch_step=10,
+        self.tensorboard = TensorboardConfig(tensorboard_path='/home/hank/Tensorboard',
+                                             experiment_name='E1_OnlyEye20w_VGG19Pre_Mse',
+                                             loss_step=200,
+                                             tsne_epoch_step=50,
                                              is_write_loss=True,
-                                             is_write_tsne=False)
+                                             is_write_tsne=True)
 
     def export_config_to_tensorboard_dir(self):
         file_out_path = os.path.join(self.tensorboard.tensorboard_path, self.tensorboard.experiment_name + '_config.txt')

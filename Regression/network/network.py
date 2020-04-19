@@ -19,8 +19,11 @@ class Network:
         pass
 
     def save_model(self):
-        os.makedirs('checkpoint/', exist_ok=True)
-        model_path = 'checkpoint/model_epoch%.3d.pth' % self._epoch
+        file_path = os.path.abspath(__file__)
+        dir_path = os.path.dirname(file_path)
+        checkpoint_path = os.path.join(dir_path, '../checkpoint')
+        os.makedirs(checkpoint_path, exist_ok=True)
+        model_path = '%s/model_epoch%.3d.pth' % (checkpoint_path, self._epoch)
         torch.save(self.model.state_dict(), model_path)
 
     def get_data(self):

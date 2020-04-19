@@ -83,7 +83,7 @@ class RandomCameraGenerator:
 
     @staticmethod
     def get_random_elev():
-        return np.arccos(1 - 2 * np.random.uniform(-0.5, 0.5))
+        return np.pi * 0.5 - np.arccos(1 - 2 * np.random.uniform(0, 1))
 
     @staticmethod
     def get_random_azim():

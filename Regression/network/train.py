@@ -25,6 +25,7 @@ class TrainNetwork(Network):
         self.labels_list = []
         self.batch_size = config.network.batch_size
         self.tsne_epoch_step = config.tensorboard.tsne_epoch_step
+        self.is_write_tsne = config.tensorboard.is_write_tsne
 
     def run_one_epoch(self):
         self.model.train()
@@ -33,7 +34,9 @@ class TrainNetwork(Network):
             self.optimizer.zero_grad()
 
             outputs = self.model(inputs)
-            if idx < (100 // self.batch_size) and self._epoch % self.tsne_epoch_step == 0:
+
+            # write tsne
+            if idx < (100 // self.batch_size) and self._epoch % self.tsne_epoch_step == 0 and self.is_write_tsne:
                 self.features_list.append(self.model.features)
                 self.labels_list.append(labels.clone().numpy())
 
