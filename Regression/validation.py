@@ -2,23 +2,25 @@ import os
 import re
 import torch
 import logging
+import numpy as np
 from glob import glob
 from torch.utils.data import DataLoader
 
 from .data import MoonDataset
 from .loss import MoonLoss
 from .network import ValidateNetwork, VGG19, ResNet18, ResNet34, ResNet50, DenseNet121, DenseNet161
-from .tensorboard import TensorboardWriter
+from .visualize import TensorboardWriter
 from .config import config
 
 
 class Validating:
     def __init__(self, data_loader):
         self._epoch = 0
-
+        self.tensorboard_writer = TensorboardWriter()
         self.network = None
         self.model = None
         self.data_loader = data_loader
+        self.loss_list = []
 
     def validate(self):
         for i, model_path in enumerate(self.models_path):
@@ -26,8 +28,13 @@ class Validating:
             self.set_model(model_path)
             self.set_network()
 
-            self.network.run_one_epoch()
+            avg_loss = self.network.run_one_epoch()
+            self.loss_list.append(avg_loss)
+
         logging.info('Finish validating')
+
+        loss_list = np.array(self.loss_list)
+        logging.info('Model with lowest loss is epoch %d' % (np.argmin(loss_list) + 1))
 
     def set_network(self):
         self.network = ValidateNetwork(data_loader=self.data_loader,
@@ -37,11 +44,10 @@ class Validating:
                                        epoch=self._epoch)
 
     def set_model(self, model_path):
-        image_size = self.data_loader.dataset[0][0].size()[1]
         models = {'VGG19': VGG19,
                   'ResNet18': ResNet18, 'ResNet34': ResNet34, 'ResNet50': ResNet50,
                   'DenseNet121': DenseNet121, 'DenseNet161': DenseNet161}
-        self.model = models[config.network.network_model](image_size=image_size)
+        self.model = models[config.network.network_model]()
 
         self.set_model_gpu()
         self.set_model_device()
@@ -85,10 +91,6 @@ class Validating:
     @property
     def loss_func(self):
         return MoonLoss()
-
-    @property
-    def tensorboard_writer(self):
-        return TensorboardWriter(dataset_type='validation')
 
 
 def validate():

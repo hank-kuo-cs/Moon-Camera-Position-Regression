@@ -36,10 +36,13 @@ class ValidateNetwork(Network):
         self.write_epoch_loss()
         self.normalize_predicts_and_labels()
         self.write_avg_error()
+        return self.avg_epoch_loss
 
     def write_epoch_loss(self):
-        self.avg_epoch_loss /= (config.dataset.train_dataset_num // config.network.batch_size)
-        self.tensorboard.write_avg_epoch_loss(epoch=self._epoch, avg_epoch_loss=self.avg_epoch_loss)
+        self.avg_epoch_loss /= (config.dataset.validation_dataset_num // config.network.batch_size)
+
+        tag = 'validate/epoch_loss'
+        self.tensorboard.add_scalar(tag=tag, x=self._epoch, y=self.avg_epoch_loss)
 
     def write_avg_error(self):
         self.write_distance_error()
@@ -50,34 +53,34 @@ class ValidateNetwork(Network):
         dist_predicts = self.predicts[:, 0]
         dist_labels = self.labels[:, 0]
 
-        small_than_10km_indices = dist_labels <= 10
-
         dist_avg_km_error = np.average(np.abs((dist_predicts - dist_labels)))
         dist_avg_km_error = float(dist_avg_km_error)
-        self.tensorboard.write_avg_error(label_type='dist', epoch=self._epoch, avg_error=dist_avg_km_error)
+
+        tag = 'validate/dist_km_error'
+
+        self.tensorboard.add_scalar(tag=tag, x=self._epoch, y=dist_avg_km_error)
+
         print('Distance average error: ±%.3f km' % dist_avg_km_error)
-
-        dist_small_than_10km_predicts = dist_predicts[small_than_10km_indices]
-        dist_small_than_10km_labels = dist_labels[small_than_10km_indices]
-
-        dist_avg_small_than_10km_error = np.average(np.abs(dist_small_than_10km_predicts - dist_small_than_10km_labels))
-        dist_avg_small_than_10km_error = float(dist_avg_small_than_10km_error)
-        self.tensorboard.write_avg_error(label_type='dist_small_than_10km', epoch=self._epoch, avg_error=dist_avg_small_than_10km_error)
-        print('Distance average error (<= 10km): ±%.3f km' % dist_avg_small_than_10km_error)
 
     def write_angle_error(self):
         if len(self.label_types) < 3:
             return
 
-        theta_avg_degree_error = np.average(np.abs(self.predicts[:, 1] - self.labels[:, 1]))
-        theta_avg_degree_error = float(theta_avg_degree_error)
-        self.tensorboard.write_avg_error(label_type='c_theta', epoch=self._epoch, avg_error=theta_avg_degree_error)
-        print('Camera theta average error: ±%.3f degree' % theta_avg_degree_error)
+        elev_avg_degree_error = np.average(np.abs(self.predicts[:, 1] - self.labels[:, 1]))
+        elev_avg_degree_error = float(elev_avg_degree_error)
 
-        phi_avg_degree_error = np.average(np.abs(self.predicts[:, 2] - self.labels[:, 2]))
-        phi_avg_degree_error = float(phi_avg_degree_error)
-        self.tensorboard.write_avg_error(label_type='c_phi', epoch=self._epoch, avg_error=phi_avg_degree_error)
-        print('Camera phi average error: ±%.3f degree' % phi_avg_degree_error)
+        tag = 'validate/elev_degree_error'
+        self.tensorboard.add_scalar(tag=tag, x=self._epoch, y=elev_avg_degree_error)
+
+        print('elev average error: ±%.3f degree' % elev_avg_degree_error)
+
+        azim_avg_degree_error = np.average(np.abs(self.predicts[:, 2] - self.labels[:, 2]))
+        azim_avg_degree_error = float(azim_avg_degree_error)
+
+        tag = 'validate/azim_degree_error'
+        self.tensorboard.add_scalar(tag=tag, x=self._epoch, y=azim_avg_degree_error)
+
+        print('azim average error: ±%.3f degree' % azim_avg_degree_error)
 
     def write_point_error(self):
         if len(self.label_types) > 3:
@@ -87,7 +90,10 @@ class ValidateNetwork(Network):
 
                 point_avg_km_error = np.average(np.abs(point_predicts - point_labels))
                 point_avg_km_error = float(point_avg_km_error)
-                self.tensorboard.write_avg_error(label_type=self.label_types[i], epoch=self._epoch, avg_error=point_avg_km_error)
+
+                tag = 'validate/%s_km_error' % self.label_types[i]
+                self.tensorboard.add_scalar(tag=tag, x=self._epoch, y=point_avg_km_error)
+
                 print('%s average error: ±%.3f' % (self.label_types[i], point_avg_km_error))
 
     def add_predicts(self, predicts):
@@ -99,16 +105,17 @@ class ValidateNetwork(Network):
         self.labels = labels if self.labels is None else np.concatenate((self.labels, labels))
 
     def normalize_predicts_and_labels(self):
-        self.predicts[:, 0] *= config.dataset.dist_range
-        self.labels[:, 0] *= config.dataset.dist_range
+        self.predicts[:, 0] *= config.generate.dist_between_moon_high_bound_km
+        self.labels[:, 0] *= config.generate.dist_between_moon_high_bound_km
 
         if len(self.label_types) >= 3:
             self.predicts[:, 1: 3] *= 360
             self.labels[:, 1: 3] *= 360
 
         if len(self.label_types) > 3:
-            self.predicts[:, 3:] *= config.dataset.normalize_point_weight
-            self.labels[:, 3:] *= config.dataset.normalize_point_weight
+            point_gl_to_km_weight = config.generate.gl_to_km / config.dataset.normalize_point_weight
+            self.predicts[:, 3:] *= point_gl_to_km_weight
+            self.labels[:, 3:] *= point_gl_to_km_weight
 
     @staticmethod
     def transform_spherical_angle_label(predicts, labels):

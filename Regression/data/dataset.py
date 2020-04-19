@@ -4,7 +4,6 @@ import numpy as np
 from torch.utils.data import Dataset
 from torchvision import transforms
 from .loader import DatasetLoader
-from ..generate.config import GL_UNIT_TO_KM, KM_TO_GL_UNIT, MOON_MAX_RADIUS_IN_GL_UNIT
 from ..config import config
 
 
@@ -46,8 +45,11 @@ class MoonDataset(Dataset):
 
     @staticmethod
     def refine_image(image):
-        if image.shape[0] > 400:
-            image = cv2.pyrDown(image)
+        image_size = config.generate.image_size
+
+        if image.shape[0] > image_size:
+            image = cv2.pyrDown(image, dstsize=(image_size, image_size))
+
         image = cv2.equalizeHist(image)
 
         transform = transforms.Compose([
@@ -73,8 +75,8 @@ class MoonDataset(Dataset):
     @classmethod
     def normalize_label(cls, label_type, value):
         normalize_func_dict = {'dist': cls.normalize_dist,
-                               'c_theta': cls.normalize_angle,
-                               'c_phi': cls.normalize_angle,
+                               'elev': cls.normalize_elev,
+                               'azim': cls.normalize_azim,
                                'p_x': cls.normalize_point,
                                'p_y': cls.normalize_point,
                                'p_z': cls.normalize_point,
@@ -87,12 +89,17 @@ class MoonDataset(Dataset):
 
     @staticmethod
     def normalize_dist(dist):
-        return dist * KM_TO_GL_UNIT + MOON_MAX_RADIUS_IN_GL_UNIT
+        return (dist - config.generate.moon_radius_gl) / config.generate.dist_high_gl
 
     @staticmethod
-    def normalize_angle(angle):
-        return angle
+    def normalize_elev(elev):
+        return elev / (np.pi * 2)
+
+    @staticmethod
+    def normalize_azim(azim):
+        return azim / (np.pi * 2)
 
     @staticmethod
     def normalize_point(point):
-        return point * KM_TO_GL_UNIT
+        weight = config.dataset.normalize_point_weight
+        return point * weight

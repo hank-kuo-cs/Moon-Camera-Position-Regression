@@ -1,5 +1,6 @@
 import os
 import torch
+from ..visualize import TensorboardWriter
 from ..config import config
 
 
@@ -54,8 +55,7 @@ class Network:
 
     @property
     def tensorboard(self):
-        if self._tensorboard_writer is None:
-            raise ValueError('Tensorboard of network is empty!')
+        assert isinstance(self._tensorboard_writer, TensorboardWriter)
         return self._tensorboard_writer
 
     @staticmethod

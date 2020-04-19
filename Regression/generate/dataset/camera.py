@@ -1,6 +1,5 @@
 import numpy as np
 from copy import deepcopy
-from ..model import Cartesian3DPoint, Spherical3DPoint
 from ...config import config
 
 
@@ -30,14 +29,7 @@ class RandomCameraGenerator:
 
     @property
     def eye_cartesian_point(self) -> np.ndarray:
-        gamma = self.dist
-        theta = np.pi * 0.5 - self.elev
-        phi = self.azim
-
-        sph_point = Spherical3DPoint(gamma, theta, phi)
-        car_point = Cartesian3DPoint.from_spherical_point(sph_point)
-
-        return car_point.to_numpy()
+        return self.spherical_to_cartesian(self.dist, self.elev, self.azim)
 
     @property
     def at_vec(self) -> np.ndarray:
@@ -60,14 +52,13 @@ class RandomCameraGenerator:
         if not config.generate.is_change_at:
             return
 
-        gamma_low = 0
-        gamma_high = config.generate.moon_radius_gl * 0.5
-        gamma = np.random.uniform(low=gamma_low, high=gamma_high)
-        theta = np.pi * 0.5 - self.get_random_elev()
-        phi = self.get_random_azim()
+        dist_low = 0
+        dist_high = config.generate.moon_radius_gl * 0.5
+        dist = np.random.uniform(low=dist_low, high=dist_high)
+        elev = self.get_random_elev()
+        azim = self.get_random_azim()
 
-        at_sph_p = Spherical3DPoint(gamma, theta, phi)
-        at_car_p = Cartesian3DPoint.from_spherical_point(at_sph_p).to_numpy()
+        at_car_p = self.spherical_to_cartesian(dist, elev, azim)
 
         eye_car_p = self.eye_cartesian_point
         at_vec = at_car_p - eye_car_p
@@ -97,3 +88,11 @@ class RandomCameraGenerator:
     @staticmethod
     def get_random_azim():
         return np.random.uniform(0, 1) * 2 * np.pi
+
+    @staticmethod
+    def spherical_to_cartesian(dist, elev, azim) -> np.ndarray:
+        x = dist * np.cos(elev) * np.sin(azim)
+        y = dist * np.sin(elev)
+        z = dist * np.cos(elev) * np.cos(azim)
+
+        return np.array([x, y, z])

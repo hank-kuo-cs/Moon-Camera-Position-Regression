@@ -12,6 +12,7 @@ class TestNetwork(Network):
         self.labels = None
         self.label_types = config.dataset.labels
         self.avg_loss = 0.0
+        self.small_than_5km_indices = None
 
     def run_one_epoch(self):
         self.model.eval()
@@ -56,26 +57,41 @@ class TestNetwork(Network):
         dist_predicts = self.predicts[:, 0]
         dist_labels = self.labels[:, 0]
 
-        small_than_10km_indices = dist_labels <= 10
+        self.small_than_5km_indices = dist_labels <= 5
 
         dist_avg_km_error = np.average(np.abs((dist_predicts - dist_labels)))
         print('Distance average error: ±%.3f km' % dist_avg_km_error)
 
-        dist_small_than_10km_predicts = dist_predicts[small_than_10km_indices]
-        dist_small_than_10km_labels = dist_labels[small_than_10km_indices]
+        dist_small_than_5km_predicts = dist_predicts[self.small_than_5km_indices]
+        dist_small_than_5km_labels = dist_labels[self.small_than_5km_indices]
 
-        dist_avg_small_than_10km_error = np.average(np.abs(dist_small_than_10km_predicts - dist_small_than_10km_labels))
-        print('Distance average error (<= 10km): ±%.3f km' % dist_avg_small_than_10km_error)
+        dist_avg_small_than_5km_error = np.average(np.abs(dist_small_than_5km_predicts - dist_small_than_5km_labels))
+        print('Distance average error (<= 5km): ±%.3f km' % dist_avg_small_than_5km_error)
 
     def show_angle_error(self):
         if len(self.label_types) < 3:
             return
+        elev_predicts, elev_labels = self.predicts[:, 1], self.labels[:, 1]
+        azim_predicts, azim_labels = self.predicts[:, 2], self.labels[:, 2]
 
-        theta_avg_degree_error = np.average(np.abs(self.predicts[:, 1] - self.labels[:, 1]))
-        print('Camera theta average error: ±%.3f degree' % theta_avg_degree_error)
+        elev_avg_degree_error = np.average(np.abs(elev_predicts - elev_labels))
+        print('elev average error: ±%.3f degree' % elev_avg_degree_error)
 
-        phi_avg_degree_error = np.average(np.abs(self.predicts[:, 2] - self.labels[:, 2]))
-        print('Camera phi average error: ±%.3f degree' % phi_avg_degree_error)
+        azim_avg_degree_error = np.average(np.abs(azim_predicts - azim_labels))
+        print('azim average error: ±%.3f degree' % azim_avg_degree_error)
+
+        elev_predicts_small_5km = elev_predicts[self.small_than_5km_indices]
+        elev_labels_small_5km = elev_labels[self.small_than_5km_indices]
+
+        elev_degree_error_small_5km = np.average(np.abs(elev_predicts_small_5km - elev_labels_small_5km))
+
+        azim_predicts_small_5km = azim_predicts[self.small_than_5km_indices]
+        azim_labels_small_5km = azim_labels[self.small_than_5km_indices]
+
+        azim_degree_error_small_5km = np.average(np.abs(azim_predicts_small_5km - azim_labels_small_5km))
+
+        print('elev average error (dist <= 5km): ±%.3fkm' % elev_degree_error_small_5km)
+        print('azim average error (dist <= 5km): ±%.3fkm' % azim_degree_error_small_5km)
 
     def show_point_error(self):
         if len(self.label_types) > 3:
@@ -95,16 +111,16 @@ class TestNetwork(Network):
         self.labels = labels if self.labels is None else np.concatenate((self.labels, labels))
 
     def normalize_predicts_and_labels(self):
-        self.predicts[:, 0] *= config.dataset.dist_range
-        self.labels[:, 0] *= config.dataset.dist_range
+        self.predicts[:, 0] *= config.generate.dist_between_moon_high_bound_km
+        self.labels[:, 0] *= config.generate.dist_between_moon_high_bound_km
 
         if len(self.label_types) >= 3:
             self.predicts[:, 1: 3] *= 360
             self.labels[:, 1: 3] *= 360
 
         if len(self.label_types) > 3:
-            self.predicts[:, 3:] *= config.dataset.normalize_point_weight
-            self.labels[:, 3:] *= config.dataset.normalize_point_weight
+            self.predicts[:, 3:] /= config.dataset.normalize_point_weight
+            self.labels[:, 3:] /= config.dataset.normalize_point_weight
 
     @staticmethod
     def transform_spherical_angle_label(predicts, labels):

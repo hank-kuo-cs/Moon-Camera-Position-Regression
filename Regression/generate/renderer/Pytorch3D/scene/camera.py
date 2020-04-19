@@ -4,11 +4,12 @@ from .....config import config
 
 
 def load_cameras(dist, elev, azim, at, up):
-    device = torch.device('cuda')
+    device = torch.device(config.cuda.device)
 
     R, T = look_at_view_transform(dist=dist,
                                   elev=elev,
                                   azim=azim,
+                                  degrees=False,
                                   at=((at[0], at[1], at[2]),),
                                   up=((up[0], up[1], up[2]),))
 

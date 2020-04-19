@@ -9,18 +9,18 @@ from .tensorboard import TensorboardConfig
 
 class Config:
     def __init__(self):
-        self.cuda = CudaConfig(device='cuda',
+        self.cuda = CudaConfig(device='cpu',
                                is_parallel=False,
                                cuda_device_number=0,
                                parallel_gpus=[0, 2, 3])
 
-        self.dataset = DatasetConfig(dataset_path='/data/space/Dataset_15km_only_c_20w',
-                                     labels=['dist', 'c_theta', 'c_phi'],
-                                     dataset_size={'train': 160000, 'test': 20000, 'validation': 20000},
-                                     sub_dataset_size=20000,
-                                     normalize_point_weight=2000.0)
+        self.dataset = DatasetConfig(dataset_path='/Users/hank/Desktop/Dataset_test',
+                                     labels=['dist', 'elev', 'azim'],
+                                     dataset_size={'train': 800, 'test': 100, 'validation': 100},
+                                     sub_dataset_size=100,
+                                     normalize_point_weight=0.5)
 
-        self.generate = GenerateConfig(moon_obj_path='/data/space/moon_object/Moon_8K.obj',
+        self.generate = GenerateConfig(moon_obj_path='/Users/hank/Desktop/data/Moon_8K.obj',
                                        image_size=400,
                                        fov=120,
                                        znear=0.0001,
@@ -41,10 +41,10 @@ class Config:
                                      l_mse=1.0,
                                      l_image_comparison=1.0)
 
-        self.tensorboard = TensorboardConfig(tensorboard_path='',
-                                             experiment_name='',
-                                             loss_step=100,
-                                             tsne_epoch_step=50,
+        self.tensorboard = TensorboardConfig(tensorboard_path='/Users/hank/Desktop/Tensorboard',
+                                             experiment_name='test',
+                                             loss_step=10,
+                                             tsne_epoch_step=10,
                                              is_write_loss=True,
                                              is_write_tsne=False)
 
@@ -55,7 +55,7 @@ class Config:
             data = {'cuda': self.cuda.__dict__,
                     'dataset': self.dataset.__dict__,
                     'network': self.network.__dict__,
-                    'tensorboard': self.tensorboard.__dict__}
+                    'visualize': self.tensorboard.__dict__}
             f.write(json.dumps(data))
 
     def print_config(self):
@@ -64,7 +64,7 @@ class Config:
         data = {'cuda': self.cuda.__dict__,
                 'dataset': self.dataset.__dict__,
                 'network': self.network.__dict__,
-                'tensorboard': self.tensorboard.__dict__}
+                'visualize': self.tensorboard.__dict__}
 
         for k1, v1 in data.items():
             print(k1)
