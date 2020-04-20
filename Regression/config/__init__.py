@@ -7,6 +7,10 @@ from .network import NetworkConfig
 from .tensorboard import TensorboardConfig
 
 
+# If you want to use cpu or parallel gpus, please comment below code.
+os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+
+
 class Config:
     def __init__(self):
         self.cuda = CudaConfig(device='cuda',
@@ -74,6 +78,3 @@ class Config:
 
 
 config = Config()
-
-if config.cuda.device == 'cuda' and not config.cuda.is_parallel:
-    os.environ['CUDA_VISIBLE_DEVICES'] = str(config.cuda.cuda_device_number)
