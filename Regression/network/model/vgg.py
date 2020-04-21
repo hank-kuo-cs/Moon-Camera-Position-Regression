@@ -1,6 +1,7 @@
 import numpy as np
 import torch.nn as nn
 from torchvision.models import vgg19_bn
+from .normalize_layer import NormalizeLayer
 from ...config import config
 
 
@@ -9,16 +10,15 @@ class VGG19(nn.Module):
         super(VGG19, self).__init__()
         self._features = None
         self._model = vgg19_bn(pretrained=True)
-        self._model.features[0] = nn.Conv2d(1, 64, kernel_size=3, padding=1)
         self._model.avgpool = self._make_avg_pool()
-        self._model.classifier = self._make_regression()
+        self._model.regression = self._make_regression()
 
     def forward(self, x):
         out = self._model.features(x)
         out = self._model.avgpool(out)
         out = out.view(out.size(0), -1)
         self._features = out.clone()
-        out = self._model.classifier(out)
+        out = self._model.regression(out)
 
         return out
 
@@ -31,7 +31,8 @@ class VGG19(nn.Module):
             nn.Dropout(p=0.5),
             nn.Linear(512, 64),
             nn.Dropout(p=0.5),
-            nn.Linear(64, len(config.dataset.labels))
+            nn.Linear(64, len(config.dataset.labels)),
+            NormalizeLayer()
         )
 
     @staticmethod

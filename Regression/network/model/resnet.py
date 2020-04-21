@@ -1,20 +1,8 @@
 import numpy as np
 import torch.nn as nn
 from torchvision.models import resnet18, resnet34, resnet50
+from .normalize_layer import NormalizeLayer
 from ...config import config
-
-
-def make_regression_layer():
-    return nn.Sequential(
-        nn.Dropout(p=0.5),
-        nn.Linear(1000, 512),
-        nn.Dropout(p=0.5),
-        nn.Linear(512, 256),
-        nn.Dropout(p=0.5),
-        nn.Linear(256, 64),
-        nn.Dropout(p=0.5),
-        nn.Linear(64, len(config.dataset.labels))
-    )
 
 
 class ResNet18(nn.Module):
@@ -22,8 +10,7 @@ class ResNet18(nn.Module):
         super(ResNet18, self).__init__()
         self._features = None
         self._model = resnet18(pretrained=True)
-        self._model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3)
-        self._model.regression = make_regression_layer()
+        self._model.regression = self._make_regression()
 
     def forward(self, x):
         output = self._model.conv1(x)
@@ -40,10 +27,22 @@ class ResNet18(nn.Module):
         output = output.view(output.size(0), -1)
         self._features = output.clone()
 
-        output = self._model.fc(output)
         output = self._model.regression(output)
 
         return output
+
+    @staticmethod
+    def _make_regression():
+        return nn.Sequential(
+            nn.Linear(512, 1024),
+            nn.Dropout(p=0.5),
+            nn.Linear(1024, 512),
+            nn.Dropout(p=0.5),
+            nn.Linear(512, 64),
+            nn.Dropout(p=0.5),
+            nn.Linear(64, len(config.dataset.labels)),
+            NormalizeLayer()
+        )
 
     @property
     def features(self) -> np.ndarray:
@@ -65,8 +64,7 @@ class ResNet34(nn.Module):
         super(ResNet34, self).__init__()
         self._features = None
         self._model = resnet34(pretrained=True)
-        self._model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3)
-        self._model.regression = make_regression_layer()
+        self._model.regression = self._make_regression()
 
     def forward(self, x):
         output = self._model.conv1(x)
@@ -83,10 +81,22 @@ class ResNet34(nn.Module):
         output = output.view(output.size(0), -1)
         self._features = output.clone()
 
-        output = self._model.fc(output)
         output = self._model.regression(output)
 
         return output
+
+    @staticmethod
+    def _make_regression():
+        return nn.Sequential(
+            nn.Linear(512, 1024),
+            nn.Dropout(p=0.5),
+            nn.Linear(1024, 512),
+            nn.Dropout(p=0.5),
+            nn.Linear(512, 64),
+            nn.Dropout(p=0.5),
+            nn.Linear(64, len(config.dataset.labels)),
+            NormalizeLayer()
+        )
 
     @property
     def features(self) -> np.ndarray:
@@ -108,8 +118,7 @@ class ResNet50(nn.Module):
         super(ResNet50, self).__init__()
         self._features = None
         self._model = resnet50(pretrained=True)
-        self._model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3)
-        self._model.regression = make_regression_layer()
+        self._model.regression = self._make_regression()
 
     def forward(self, x):
         output = self._model.conv1(x)
@@ -126,10 +135,22 @@ class ResNet50(nn.Module):
         output = output.view(output.size(0), -1)
         self._features = output.clone()
 
-        output = self._model.fc(output)
         output = self._model.regression(output)
 
         return output
+
+    @staticmethod
+    def _make_regression():
+        return nn.Sequential(
+            nn.Linear(2048, 1024),
+            nn.Dropout(p=0.5),
+            nn.Linear(1024, 512),
+            nn.Dropout(p=0.5),
+            nn.Linear(512, 64),
+            nn.Dropout(p=0.5),
+            nn.Linear(64, len(config.dataset.labels)),
+            NormalizeLayer()
+        )
 
     @property
     def features(self) -> np.ndarray:
