@@ -64,7 +64,6 @@ class DatasetWriter:
 
     def _save_image(self, image):
         self.check_image(image)
-        image = self.pyr_down_image(image)
 
         save_image = {'train': self._save_train_image,
                       'test': self._save_test_image,
@@ -137,18 +136,19 @@ class DatasetWriter:
 
         os.makedirs(path, exist_ok=True)
 
-    @staticmethod
-    def pyr_down_image(image):
-        img_size = config.generate.image_size
-        if image.shape[0] > img_size:
-            image = cv2.pyrDown(image, dstsize=(img_size, img_size))
-        return image
+    # @staticmethod
+    # def pyr_down_image(image):
+    #     img_size = config.generate.image_size
+    #     if image.shape[0] > img_size:
+    #         image = cv2.pyrDown(image, dstsize=(img_size, img_size))
+    #     return image
 
     @staticmethod
     def check_image(image):
+        img_size = config.generate.image_size
+
         assert isinstance(image, np.ndarray)
-        assert image.shape[0] == config.generate.image_size
-        assert image.shape[1] == config.generate.image_size
+        assert image.shape == (img_size, img_size, 3)
 
     @staticmethod
     def check_label(label):
