@@ -58,6 +58,13 @@ class MoonDataset(Dataset):
 
         return image
 
+    @staticmethod
+    def equalize_rgb_histogram(image: np.ndarray) -> np.ndarray:
+        ycr_cb = cv2.cvtColor(image, cv2.COLOR_BGR2YCR_CB)
+        ycr_cb[:, :, 0] = cv2.equalizeHist(ycr_cb[:, :, 0])
+
+        return cv2.cvtColor(ycr_cb, cv2.COLOR_YCR_CB2BGR)
+
     @classmethod
     def refine_label(cls, label: dict):
         refined_label = []
