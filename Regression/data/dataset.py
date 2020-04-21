@@ -91,15 +91,23 @@ class MoonDataset(Dataset):
     def normalize_dist(dist):
         dist = (dist - config.generate.moon_radius_gl)
         dist /= config.generate.dist_between_moon_high_bound_km * config.generate.km_to_gl
+        if dist < 0 or dist > 1:
+            raise ValueError('dist must be normalized to [0, 1]')
         return dist
 
     @staticmethod
     def normalize_elev(elev):
-        return elev / (np.pi * 2)
+        elev = elev / (np.pi / 2)
+        if elev < -1 or elev > 1:
+            raise ValueError('elev must be normalized to [-1, 1]')
+        return elev
 
     @staticmethod
     def normalize_azim(azim):
-        return azim / (np.pi * 2)
+        azim = azim / (np.pi * 2)
+        if azim < 0 or azim > 1:
+            raise ValueError('azim must be normalized to [0, 1]')
+        return azim
 
     @staticmethod
     def normalize_point(point):
