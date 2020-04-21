@@ -48,6 +48,10 @@ class DatasetConfig:
         return self._labels
 
     @property
+    def labels_num(self) -> int:
+        return len(self._labels)
+
+    @property
     def normalize_point_weight(self) -> float:
         return self._normalize_point_weight
 
