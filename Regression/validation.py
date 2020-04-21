@@ -34,7 +34,7 @@ class Validating:
         logging.info('Finish validating')
 
         loss_list = np.array(self.loss_list)
-        logging.info('Model with lowest loss is epoch %d' % (np.argmin(loss_list) + 1))
+        logging.info('Model with lowest loss is epoch %d = %.3f' % (np.argmin(loss_list) + 1, np.min(loss_list)))
 
     def set_network(self):
         self.network = ValidateNetwork(data_loader=self.data_loader,
