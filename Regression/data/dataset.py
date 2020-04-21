@@ -26,7 +26,7 @@ class MoonDataset(Dataset):
 
     def get_image(self, item):
         image_path = self.dataset_loader.images_path[item]
-        image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        image = cv2.imread(image_path)
 
         assert isinstance(image, np.ndarray)
         assert image.shape[0] > 0
@@ -47,14 +47,11 @@ class MoonDataset(Dataset):
     def refine_image(image):
         image_size = config.generate.image_size
 
-        if image.shape[0] > image_size:
-            image = cv2.pyrDown(image, dstsize=(image_size, image_size))
-
-        image = cv2.equalizeHist(image)
+        assert image.shape == (image_size, image_size, 3)
 
         transform = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize([0.5], [0.5])
+            transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ])
 
         image = transform(image)
