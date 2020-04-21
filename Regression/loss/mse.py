@@ -1,19 +1,22 @@
 import torch
 from torch.nn import MSELoss
-from .spherical_transform import transform_spherical_angle_label, get_spherical_angle_constant_loss
 from ..config import config
 
 
-def get_mse_loss(predicts, labels):
-    label_num = len(config.dataset.labels)
-    labels = labels.clone()[:, :label_num]
-    constant_loss = torch.tensor(0, dtype=torch.float)
+def get_mse_loss(predicts, gts):
+    if 'azim' in config.dataset.labels:
+        azim_index = config.dataset.labels.index('azim')
+        gts[:, azim_index] = adjust_azim_labels_to_use_scmse(predicts[:, azim_index], gts[:, azim_index])
 
-    if labels.shape[1] >= 3:
-        transform_spherical_angle_label(predicts, labels)
-        constant_loss = get_spherical_angle_constant_loss(predicts)
+    return MSELoss()(predicts, gts)
 
-    mse_loss = MSELoss()(predicts, labels)
-    loss = torch.add(mse_loss, constant_loss)
 
-    return loss
+def adjust_azim_labels_to_use_scmse(azim_predicts, azim_gts):
+    condition1 = torch.abs(azim_predicts - azim_gts) > 0.5
+    condition2 = azim_predicts > azim_gts
+    condition3 = azim_predicts < azim_gts
+
+    azim_gts = torch.where(condition1 & condition2, azim_gts + 1, azim_gts)
+    azim_gts = torch.where(condition1 & condition3, azim_gts - 1, azim_gts)
+
+    return azim_gts
