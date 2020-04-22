@@ -76,14 +76,14 @@ class Network:
         return numpy_array
 
     @staticmethod
-    def adjust_azim_numpys_to_use_scmse(azim_predicts: np.ndarray, azim_gts: np.ndarray):
+    def adjust_azim_degrees_to_use_scmse(azim_predicts: np.ndarray, azim_gts: np.ndarray):
         assert isinstance(azim_predicts, np.ndarray) and isinstance(azim_gts, np.ndarray)
 
-        condition1 = np.abs(azim_predicts - azim_gts) > 0.5
+        condition1 = np.abs(azim_predicts - azim_gts) > 180
         condition2 = azim_predicts > azim_gts
         condition3 = azim_predicts < azim_gts
 
-        azim_gts = np.where(condition1 & condition2, azim_gts + 1, azim_gts)
-        azim_gts = np.where(condition1 & condition3, azim_gts - 1, azim_gts)
+        azim_gts = np.where(condition1 & condition2, azim_gts + 360, azim_gts)
+        azim_gts = np.where(condition1 & condition3, azim_gts - 360, azim_gts)
 
         return azim_gts

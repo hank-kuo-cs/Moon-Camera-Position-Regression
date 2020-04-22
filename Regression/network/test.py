@@ -135,6 +135,6 @@ class TestNetwork(Network):
         assert ground_truths.shape[0] <= config.dataset.test_dataset_num and ground_truths.ndim == 1
 
         if is_azim:
-            ground_truths = self.adjust_azim_numpys_to_use_scmse(predicts, ground_truths)
+            ground_truths = self.adjust_azim_degrees_to_use_scmse(predicts, ground_truths)
 
         return float(np.average(np.abs(predicts - ground_truths)))
