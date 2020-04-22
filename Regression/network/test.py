@@ -9,8 +9,8 @@ from tqdm import tqdm
 class TestNetwork(Network):
     def __init__(self, model, data_loader, loss_func, epoch):
         super().__init__(model=model, data_loader=data_loader, loss_func=loss_func, epoch=epoch)
-        self.predicts = None
-        self.labels = None
+        self.predicts = []
+        self.labels = []
         self.label_types = config.dataset.labels
         self.avg_loss = 0.0
         self.small_than_5km_indices = None
