@@ -1,7 +1,6 @@
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from Regression.data import MoonDataset
 
 
@@ -15,6 +14,7 @@ def plot_3d_points(xs, ys, zs):
 
     plt.savefig('camera_point_distribution.png')
     # plt.show()
+
 
 def transform_spherical_to_cartesian(dist, elev, azim):
     x = dist * np.cos(elev) * np.sin(azim)
