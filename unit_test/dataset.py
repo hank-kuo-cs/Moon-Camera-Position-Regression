@@ -1,6 +1,7 @@
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 from Regression.data import MoonDataset
 
 
@@ -33,7 +34,8 @@ def dataset_test():
     elev_list = []
     azim_list = []
 
-    for img, label in train_datatset:
+    print('load train dataset...')
+    for img, label in tqdm(train_datatset):
         dist = label[0]
         elev = label[1]
         azim = label[2]
@@ -42,7 +44,8 @@ def dataset_test():
         elev_list.append(elev)
         azim_list.append(azim)
 
-    for img, label in test_dataset:
+    print('load test dataset...')
+    for img, label in tqdm(test_dataset):
         dist = label[0]
         elev = label[1]
         azim = label[2]
@@ -51,7 +54,8 @@ def dataset_test():
         elev_list.append(elev)
         azim_list.append(azim)
 
-    for img, label in valid_dataset:
+    print('load validate dataset...')
+    for img, label in tqdm(valid_dataset):
         dist = label[0]
         elev = label[1]
         azim = label[2]
@@ -78,7 +82,8 @@ def dataset_test():
     ys = []
     zs = []
 
-    for i in range(len(dist_list)):
+    print('transform all spherical points to cartesian coordinate...')
+    for i in tqdm(range(len(dist_list))):
         x, y, z = transform_spherical_to_cartesian(dist_list[i], elev_list[i], azim_list[i])
         xs.append(x)
         ys.append(y)
