@@ -58,6 +58,8 @@ class TestNetwork(Network):
         dist_predicts = self.predicts[:, 0]
         dist_gts = self.labels[:, 0]
 
+        assert isinstance(dist_predicts, np.ndarray) and isinstance(dist_gts, np.ndarray)
+
         self.small_than_5km_indices = dist_gts <= 5
 
         dist_avg_km_error = self.get_average_error(dist_predicts, dist_gts)
@@ -131,8 +133,8 @@ class TestNetwork(Network):
     @staticmethod
     def get_average_error(predicts, ground_truths, is_azim=False):
         assert isinstance(predicts, np.ndarray) and isinstance(ground_truths, np.ndarray)
-        assert predicts.shape == (config.network.batch_size, 1)
-        assert ground_truths.shape == (config.network.batch_size, 1)
+        assert predicts.shape[0] == config.network.batch_size and predicts.ndim == 1
+        assert ground_truths.shape[0] == config.network.batch_size and ground_truths.ndim == 1
 
         if is_azim:
             ground_truths = adjust_azim_labels_to_use_scmse(predicts, ground_truths)
