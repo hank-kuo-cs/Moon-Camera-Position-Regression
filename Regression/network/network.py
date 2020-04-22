@@ -1,5 +1,6 @@
 import os
 import torch
+import numpy as np
 from ..visualize import TensorboardWriter
 from ..config import config
 
@@ -73,3 +74,16 @@ class Network:
 
         numpy_array = tensor_array.numpy()
         return numpy_array
+
+    @staticmethod
+    def adjust_azim_numpys_to_use_scmse(azim_predicts: np.ndarray, azim_gts: np.ndarray):
+        assert isinstance(azim_predicts, np.ndarray) and isinstance(azim_gts, np.ndarray)
+
+        condition1 = np.abs(azim_predicts - azim_gts) > 0.5
+        condition2 = azim_predicts > azim_gts
+        condition3 = azim_predicts < azim_gts
+
+        azim_gts = np.where(condition1 & condition2, azim_gts + 1, azim_gts)
+        azim_gts = np.where(condition1 & condition3, azim_gts - 1, azim_gts)
+
+        return azim_gts

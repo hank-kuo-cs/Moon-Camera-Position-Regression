@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 from .network import Network
-from ..loss.mse import adjust_azim_labels_to_use_scmse
 from ..config import config
 from tqdm import tqdm
 
@@ -130,13 +129,12 @@ class TestNetwork(Network):
             self.predicts[:, 3:] /= config.dataset.normalize_point_weight
             self.labels[:, 3:] /= config.dataset.normalize_point_weight
 
-    @staticmethod
-    def get_average_error(predicts, ground_truths, is_azim=False):
+    def get_average_error(self, predicts, ground_truths, is_azim=False):
         assert isinstance(predicts, np.ndarray) and isinstance(ground_truths, np.ndarray)
-        assert predicts.shape[0] == config.network.batch_size and predicts.ndim == 1
-        assert ground_truths.shape[0] == config.network.batch_size and ground_truths.ndim == 1
+        assert predicts.shape[0] <= config.dataset.test_dataset_num and predicts.ndim == 1
+        assert ground_truths.shape[0] <= config.dataset.test_dataset_num and ground_truths.ndim == 1
 
         if is_azim:
-            ground_truths = adjust_azim_labels_to_use_scmse(predicts, ground_truths)
+            ground_truths = self.adjust_azim_numpys_to_use_scmse(predicts, ground_truths)
 
         return float(np.average(np.abs(predicts - ground_truths)))
