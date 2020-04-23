@@ -37,8 +37,7 @@ class TrainNetwork(Network):
 
             # write tsne
             if idx < (100 // self.batch_size) and self._epoch % self.tsne_epoch_step == 0 and self.is_write_tsne:
-                self.features_list.append(self.model.features)
-                self.labels_list.append(labels.clone().numpy())
+                self.store_tsne_data(features=self.model.features, labels=labels)
 
             loss = self.loss_func(outputs, labels)
 
@@ -77,7 +76,13 @@ class TrainNetwork(Network):
         y = self.avg_epoch_loss
         self.tensorboard.add_scalar(tag=tag, x=x, y=y)
 
-        self.avg_epoch_loss = 0.0
+        self.avg_epoch_loss = 0.
+
+    def store_tsne_data(self, features, labels):
+        features = self.tensor_to_numpy(features)
+        labels = self.tensor_to_numpy(labels)
+        self.features_list.append(features)
+        self.labels_list.append(labels)
 
     def show_tsne(self):
         if not len(self.features_list):
