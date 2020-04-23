@@ -79,8 +79,8 @@ class TrainNetwork(Network):
         self.avg_epoch_loss = 0.
 
     def store_tsne_data(self, features, labels):
-        features = self.tensor_to_numpy(features)
         labels = self.tensor_to_numpy(labels)
+
         self.features_list.append(features)
         self.labels_list.append(labels)
 
