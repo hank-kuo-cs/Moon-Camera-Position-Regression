@@ -6,7 +6,12 @@ class NetworkConfig:
                  learning_rate: float = 0.001,
                  momentum: float = 0.9,
                  l_mse: float = 1.0,
-                 l_image_comparison: float = 1.0):
+                 l_image_comparison: float = 1.0,
+                 l_mse_dist: float = 1.0,
+                 l_mse_elev: float = 1.0,
+                 l_mse_azim: float = 2.0,
+                 l_mse_p: float = 1.0,
+                 l_mse_u: float = 1.0):
 
         self._network_model = network_model
         self._epoch_num = epoch_num
@@ -15,6 +20,11 @@ class NetworkConfig:
         self._momentum = momentum
         self._l_mse = l_mse
         self._l_image_comparison = l_image_comparison
+        self.l_mse_dist = l_mse_dist
+        self.l_mse_elev = l_mse_elev
+        self.l_mse_azim = l_mse_azim
+        self.l_mse_p = l_mse_p
+        self.l_mse_u = l_mse_u
 
         self.check_parameters()
 

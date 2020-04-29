@@ -18,7 +18,7 @@ class Config:
                                cuda_device_number=3,
                                parallel_gpus=[0, 2, 3])
 
-        self.dataset = DatasetConfig(dataset_path='/data/space/pytorch3d/Dataset_only_eye_15km_20w',
+        self.dataset = DatasetConfig(dataset_path='/data/space/pytorch3d/Dataset_only_eye_15km_rgb_20w',
                                      labels=['dist', 'elev', 'azim'],
                                      dataset_size={'train': 160000, 'test': 20000, 'validation': 20000},
                                      sub_dataset_size=20000,
@@ -43,14 +43,19 @@ class Config:
                                      learning_rate=0.001,
                                      momentum=0.9,
                                      l_mse=1.0,
-                                     l_image_comparison=1.0)
+                                     l_image_comparison=1.0,
+                                     l_mse_dist=1.0,
+                                     l_mse_elev=2.0,
+                                     l_mse_azim=4.0,
+                                     l_mse_p=1.0,
+                                     l_mse_u=1.0)
 
         self.tensorboard = TensorboardConfig(tensorboard_path='/home/hank/Tensorboard',
-                                             experiment_name='E1_OnlyEye20w_VGG19Pre_Mse',
+                                             experiment_name='E4_OnlyEye20w_VGG19Pre_lambda_b10_lr1e3_sgd',
                                              loss_step=200,
                                              tsne_epoch_step=50,
                                              is_write_loss=True,
-                                             is_write_tsne=True)
+                                             is_write_tsne=False)
 
     def export_config_to_tensorboard_dir(self):
         file_out_path = os.path.join(self.tensorboard.tensorboard_path, self.tensorboard.experiment_name + '_config.txt')
