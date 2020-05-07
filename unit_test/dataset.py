@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 from Regression.data import MoonDataset
+from Regression.config import config
+
+
+high_km = config.generate.dist_between_moon_high_bound_km
+moon_radius = config.generate.moon_radius_gl * config.generate.gl_to_km
 
 
 def plot_3d_points(xs, ys, zs):
@@ -13,8 +18,8 @@ def plot_3d_points(xs, ys, zs):
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
 
-    plt.savefig('camera_point_distribution.png')
-    # plt.show()
+    # plt.savefig('camera_point_distribution.png')
+    plt.show()
 
 
 def transform_spherical_to_cartesian(dist, elev, azim):
@@ -25,66 +30,49 @@ def transform_spherical_to_cartesian(dist, elev, azim):
     return x, y, z
 
 
+def load_dataset(dataset):
+    dist_list = []
+    elev_list = []
+    azim_list = []
+
+    for img, label in tqdm(dataset):
+        dist = label[0] * high_km + moon_radius
+        elev = label[1] * np.pi / 2
+        azim = label[2] * np.pi * 2
+
+        dist_list.append(dist)
+        elev_list.append(elev)
+        azim_list.append(azim)
+
+    return dist_list, elev_list, azim_list
+
+
 def dataset_test():
     train_datatset = MoonDataset('train')
     test_dataset = MoonDataset('test')
     valid_dataset = MoonDataset('validation')
 
-    dist_list = []
-    elev_list = []
-    azim_list = []
-
-    print('load train dataset...')
-    for img, label in tqdm(train_datatset):
-        dist = label[0]
-        elev = label[1]
-        azim = label[2]
-
-        dist_list.append(dist)
-        elev_list.append(elev)
-        azim_list.append(azim)
-
-    print('load test dataset...')
-    for img, label in tqdm(test_dataset):
-        dist = label[0]
-        elev = label[1]
-        azim = label[2]
-
-        dist_list.append(dist)
-        elev_list.append(elev)
-        azim_list.append(azim)
-
-    print('load validate dataset...')
-    for img, label in tqdm(valid_dataset):
-        dist = label[0]
-        elev = label[1]
-        azim = label[2]
-
-        dist_list.append(dist)
-        elev_list.append(elev)
-        azim_list.append(azim)
-
-    # plt.xlim((0, 1))
-    # sns.distplot(dist_list)
-    # plt.show()
-    #
-    # plt.xlim((-1, 1))
-    # sns.distplot(elev_list)
-    # plt.show()
-    #
-    # plt.xlim((0, 1))
-    # sns.distplot(azim_list)
-    # plt.show()
-    #
-    # plt.close()
-
+    dists = []
+    elevs = []
+    azims = []
     xs = []
     ys = []
     zs = []
 
+    dataset_types = ['train', 'test', 'validation']
+
+    for dataset_type in dataset_types:
+        print('loading %s dataset...' % dataset_type)
+        moon_dataset = MoonDataset(dataset_type)
+
+        dist_list, elev_list, azim_list = load_dataset(moon_dataset)
+        dists += dist_list
+        elevs += elev_list
+        azims += azim_list
+
     print('transform all spherical points to cartesian coordinate...')
-    for i in tqdm(range(len(dist_list))):
-        x, y, z = transform_spherical_to_cartesian(dist_list[i], elev_list[i], azim_list[i])
+    for i in tqdm(range(len(dists))):
+        x, y, z = transform_spherical_to_cartesian(dists[i], elevs[i], azims[i])
         xs.append(x)
         ys.append(y)
         zs.append(z)
