@@ -1,6 +1,6 @@
 import os
 from tensorboardX import SummaryWriter
-from ..config import config
+from Regression.config import config
 
 
 class LossWriter:

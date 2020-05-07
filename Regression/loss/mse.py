@@ -1,26 +1,42 @@
 import torch
 from torch.nn import MSELoss
-from .spherical_transform import transform_spherical_angle_label, get_spherical_angle_constant_loss
 from ..config import config
-from ..generate.config import MOON_MAX_RADIUS_IN_GL_UNIT, KM_TO_GL_UNIT
 
 
-def get_mse_loss(predicts, labels):
-    label_num = len(config.dataset.labels)
-    labels = labels.clone()[:, :label_num]
-    constant_loss = torch.tensor(0, dtype=torch.float)
+def get_mse_loss(predicts, gts):
+    if 'azim' in config.dataset.labels:
+        azim_index = config.dataset.labels.index('azim')
+        gts[:, azim_index] = adjust_azim_labels_to_use_scmse(predicts[:, azim_index], gts[:, azim_index])
 
-    if labels.shape[1] >= 3:
-        transform_spherical_angle_label(predicts, labels)
-        constant_loss = get_spherical_angle_constant_loss(predicts)
+    labels_num = config.dataset.labels_num
+    l_mse_dist, l_mse_elev, l_mse_azim = config.network.l_mse_dist, config.network.l_mse_elev, config.network.l_mse_azim
+    l_mse_p, l_mse_u = config.network.l_mse_p, config.network.l_mse_u
 
-    predicts[:, 0] = torch.div(predicts[:, 0], MOON_MAX_RADIUS_IN_GL_UNIT + (config.dataset.dist_range * KM_TO_GL_UNIT))
-    labels[:, 0] = torch.div(labels[:, 0], MOON_MAX_RADIUS_IN_GL_UNIT + (config.dataset.dist_range * KM_TO_GL_UNIT))
+    dist_loss, elev_loss, azim_loss, p_loss, u_loss = 0.0, 0.0, 0.0, 0.0, 0.0
 
-    predicts[:, 3:] = torch.div(predicts[:, 3:], config.dataset.normalize_point_weight * KM_TO_GL_UNIT)
-    labels[:, 3:] = torch.div(labels[:, 3:], config.dataset.normalize_point_weight * KM_TO_GL_UNIT)
+    dist_loss = MSELoss()(predicts[:, 0], gts[:, 0]) * l_mse_dist
 
-    mse_loss = MSELoss()(predicts, labels)
-    loss = torch.add(mse_loss, constant_loss)
+    if labels_num > 1:
+        elev_loss = MSELoss()(predicts[:, 1], gts[:, 1]) * l_mse_elev
+        azim_loss = MSELoss()(predicts[:, 2], gts[:, 2]) * l_mse_azim
 
-    return loss
+    if labels_num > 3:
+        p_loss = MSELoss()(predicts[:, 3:6], gts[:, 3:6]) * l_mse_p
+
+    if labels_num > 6:
+        u_loss = MSELoss()(predicts[:, 6:9], gts[:, 6:9]) * l_mse_u
+
+    mse_loss = (dist_loss + elev_loss + azim_loss + p_loss + u_loss) / labels_num
+
+    return mse_loss
+
+
+def adjust_azim_labels_to_use_scmse(azim_predicts, azim_gts):
+    condition1 = torch.abs(azim_predicts - azim_gts) > 0.5
+    condition2 = azim_predicts > azim_gts
+    condition3 = azim_predicts < azim_gts
+
+    azim_gts = torch.where(condition1 & condition2, azim_gts + 1, azim_gts)
+    azim_gts = torch.where(condition1 & condition3, azim_gts - 1, azim_gts)
+
+    return azim_gts

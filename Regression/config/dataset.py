@@ -4,7 +4,6 @@ class DatasetConfig:
                  labels: list,
                  dataset_size: dict,
                  sub_dataset_size: int,
-                 dist_range: float,
                  normalize_point_weight: float):
 
         self._dataset_path = dataset_path
@@ -12,7 +11,6 @@ class DatasetConfig:
         self._dataset_size = dataset_size
         self._sub_dataset_size = sub_dataset_size
         self._dataset_types = ['train', 'test', 'validation']
-        self._dist_range = dist_range   # km
         self._normalize_point_weight = normalize_point_weight
 
         self.check_parameters()
@@ -46,12 +44,12 @@ class DatasetConfig:
         return self._sub_dataset_size
 
     @property
-    def dist_range(self) -> float:
-        return self._dist_range
-
-    @property
     def labels(self) -> list:
         return self._labels
+
+    @property
+    def labels_num(self) -> int:
+        return len(self._labels)
 
     @property
     def normalize_point_weight(self) -> float:
@@ -69,10 +67,9 @@ class DatasetConfig:
         assert isinstance(self._labels, list)
         assert isinstance(self._dataset_size, dict)
         assert isinstance(self._sub_dataset_size, int)
-        assert isinstance(self._dist_range, float)
         assert isinstance(self._normalize_point_weight, float)
 
-        labels = ['dist', 'c_theta', 'c_phi', 'p_x', 'p_y', 'p_z', 'u_x', 'u_y', 'u_z']
+        labels = ['dist', 'elev', 'azim', 'p_x', 'p_y', 'p_z', 'u_x', 'u_y', 'u_z']
 
         for l in self._labels:
             assert l in labels

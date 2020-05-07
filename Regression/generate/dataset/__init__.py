@@ -1,1 +1,1 @@
-from .writer import DatasetWriter, RandomViewGenerator, RandomLightGenerator, LabelGenerator
+from .writer import DatasetWriter, RandomCameraGenerator, RandomLightGenerator, LabelGenerator

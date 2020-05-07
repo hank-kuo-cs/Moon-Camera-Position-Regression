@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from .data import MoonDataset
 from .loss import MoonLoss
 from .network import TrainNetwork, VGG19, ResNet18, ResNet34, ResNet50, DenseNet121, DenseNet161
-from .tensorboard import TensorboardWriter
+from .visualize import TensorboardWriter
 from .config import config
 
 
@@ -41,15 +41,14 @@ class Training:
                                     data_loader=self.data_loader,
                                     loss_func=self.loss_func,
                                     optimizer=self.optimizer,
-                                    tensorboard_writer=self.tensorboard_writer,
+                                    tensorboard_writer=TensorboardWriter(),
                                     epoch=self._epoch)
 
     def set_model(self):
-        image_size = self.data_loader.dataset[0][0].size()[1]
         models = {'VGG19': VGG19,
                   'ResNet18': ResNet18, 'ResNet34': ResNet34, 'ResNet50': ResNet50,
                   'DenseNet121': DenseNet121, 'DenseNet161': DenseNet161}
-        self.model = models[config.network.network_model](image_size=image_size)
+        self.model = models[config.network.network_model]()
 
         self.set_model_gpu()
         self.set_model_device()
@@ -110,10 +109,6 @@ class Training:
         return torch.optim.SGD(params=self.model.parameters(),
                                lr=config.network.learning_rate,
                                momentum=config.network.momentum)
-
-    @property
-    def tensorboard_writer(self):
-        return TensorboardWriter(dataset_type='train')
 
 
 def train():

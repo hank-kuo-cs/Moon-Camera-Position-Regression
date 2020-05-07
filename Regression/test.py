@@ -40,11 +40,10 @@ class Testing:
                                    epoch=self._epoch)
 
     def set_model(self):
-        image_size = self.data_loader.dataset[0][0].size()[1]
         models = {'VGG19': VGG19,
                   'ResNet18': ResNet18, 'ResNet34': ResNet34, 'ResNet50': ResNet50,
                   'DenseNet121': DenseNet121, 'DenseNet161': DenseNet161}
-        self.model = models[config.network.network_model](image_size=image_size)
+        self.model = models[config.network.network_model]()
 
         self.set_model_gpu()
         self.set_model_device()
