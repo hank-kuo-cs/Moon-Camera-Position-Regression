@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from pytorch3d.renderer import MeshRenderer, MeshRasterizer, TexturedSoftPhongShader
 from .mesh import load_mesh
-from .scene import load_lights, load_cameras, load_rasterization_setting
+from .scene import load_lights, load_perspective_cameras, load_rasterization_setting, load_camera_positions
 from ....config import config
 
 
@@ -15,31 +15,44 @@ class Pytorch3DRenderer:
         self.raster_settings = None
         self.lights = None
         self.mesh_renderer = None
+        self.R = None
+        self.T = None
 
         self.initialize()
 
     def initialize(self):
-        self.set_device()
-        self.set_mesh()
-        self.set_lights()
-        self.set_raster_settings()
+        self._set_device()
+        self._set_mesh()
+        self._set_perspective_cameras()
+        self._set_lights()
+        self._set_raster_settings()
+        self._set_renderer()
 
-    def set_device(self):
+    def _set_device(self):
         self.device = torch.device(config.cuda.device)
 
-    def set_mesh(self):
+    def _set_mesh(self):
         self.mesh = load_mesh()
 
-    def set_cameras(self, dist, elev, azim, at, up):
-        self.cameras = load_cameras(dist=dist, elev=elev, azim=azim, at=at, up=up)
+    def _set_perspective_cameras(self):
+        self.cameras = load_perspective_cameras()
 
-    def set_raster_settings(self):
+    def _set_raster_settings(self):
         self.raster_settings = load_rasterization_setting()
 
-    def set_lights(self):
+    def _set_lights(self):
         self.lights = load_lights()
 
-    def render_image(self) -> np.ndarray:
+    def set_cameras(self, dist, elev, azim, at, up, is_degree=False):
+        if is_degree:
+            elev *= (np.pi / 180)
+            azim *= (np.pi / 180)
+
+        R, T = load_camera_positions(dist, elev, azim, at, up)
+        self.R = R
+        self.T = T
+
+    def _set_renderer(self):
         if self.cameras is None:
             raise ValueError('cameras is None in pytorch3D renderer!')
 
@@ -53,7 +66,9 @@ class Pytorch3DRenderer:
         self.mesh_renderer = MeshRenderer(rasterizer=rasterizer,
                                           shader=shader)
 
-        image = self.mesh_renderer(self.mesh)
+    def render_image(self) -> np.ndarray:
+        assert self.R is not None and self.T is not None
+        image = self.mesh_renderer(self.mesh, R=self.R, T=self.T)
         return image
 
     @staticmethod
