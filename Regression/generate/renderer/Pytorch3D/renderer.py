@@ -68,6 +68,7 @@ class Pytorch3DRenderer:
 
     def render_image(self) -> np.ndarray:
         assert self.R is not None and self.T is not None
+
         image = self.mesh_renderer(self.mesh.clone(), R=self.R, T=self.T)
         return image
 
