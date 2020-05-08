@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.nn import L1Loss
+from ...loss.fine_tune import SSIM
 from ...config import config
 
 
@@ -24,7 +25,8 @@ class CameraPositionOptimizer(nn.Module):
                                   up=(0, 1, 0))
         predict_image = self.renderer.render_image()[..., :3]
 
-        loss = L1Loss()(predict_image, self.target_image)
+        # loss = L1Loss()(predict_image, self.target_image)
+        loss = 1 - SSIM()(self.target_image, predict_image)
 
         return loss
 
