@@ -34,9 +34,9 @@ class FineTuner:
 
         model = CameraPositionOptimizer(self.renderer, target_image, dist, elev, azim).to(config.cuda.device)
 
-        epochs = 1
+        epochs = 1000
         lr = 0.001
-        loss_low_bound = 0.03
+        loss_low_bound = 0.02
 
         optimizer = Adam(model.parameters(), lr=lr)
         best_position = [0.0, 0.0, 0.0]
