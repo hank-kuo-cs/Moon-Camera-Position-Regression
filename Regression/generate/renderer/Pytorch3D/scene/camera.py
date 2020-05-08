@@ -1,4 +1,5 @@
 import torch
+from torch.nn import Parameter
 import numpy as np
 from pytorch3d.renderer import look_at_view_transform, OpenGLPerspectiveCameras
 from .....config import config

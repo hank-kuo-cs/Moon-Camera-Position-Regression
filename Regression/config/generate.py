@@ -37,6 +37,10 @@ class GenerateConfig:
     def dist_high_gl(self) -> float:
         return self.moon_radius_gl + self.dist_between_moon_high_bound_km * self.km_to_gl
 
+    @property
+    def dist_between_moon_high_bound_gl(self) -> float:
+        return self.dist_between_moon_high_bound_km * self.km_to_gl
+
     def check_parameters(self):
         assert isinstance(self.moon_obj_path, str) and len(self.moon_obj_path) > 0
         assert isinstance(self.image_size, int) and self.image_size > 0
