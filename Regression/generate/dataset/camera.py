@@ -57,16 +57,21 @@ class RandomCameraGenerator:
         self.at = at.tolist()
 
     def set_up(self):
-        if not config.generate.is_change_up:
-            up = np.random.uniform(0, 1, 3)
-        else:
-            up = deepcopy(self.up)
+        while True:
+            if not config.generate.is_change_up:
+                up = np.random.uniform(0, 1, 3)
+            else:
+                up = deepcopy(self.up)
 
-        at_vec = self.at_vec
+            at_vec = self.at_vec
 
-        up = np.cross(at_vec, up)
-        up = np.cross(up, at_vec)
-        up /= np.linalg.norm(up)
+            up = np.cross(at_vec, up)
+            up = np.cross(up, at_vec)
+
+            up_length = np.linalg.norm(up)
+            if up_length != 0:
+                up /= up_length
+                break
 
         self.up = up.tolist()
 
