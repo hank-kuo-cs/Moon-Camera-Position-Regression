@@ -35,7 +35,7 @@ class Testing:
     def set_arguments(self, args):
         self._epoch_of_model = args.epoch_of_model
         self._is_fine_tune = args.fine_tune
-        self._small_dataset_size = args.small_dataset_size
+        self._small_dataset_size = args.small_dataset
 
     def set_network(self):
         self.network = TestNetwork(data_loader=self.data_loader,
