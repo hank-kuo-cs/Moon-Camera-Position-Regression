@@ -1,9 +1,8 @@
-import os
 import torch
 import numpy as np
 from torch.optim import Adam
 from ...generate.renderer import Pytorch3DRenderer
-from .position_optimizer import CameraPositionOptimizer
+from .camera_position_optimizer import CameraPositionOptimizer
 from ...config import config
 
 
@@ -14,7 +13,6 @@ class FineTuner:
     def fine_tune_predict_positions(self, target_images, predict_positions):
         fine_tuned_predicts = []
 
-        # TODO: Fine tune predictions
         batch_size = config.network.batch_size
         for i in range(batch_size):
             target_image = target_images[i]
@@ -30,11 +28,11 @@ class FineTuner:
 
     def _fine_tune_one_position(self, target_image, predict_position):
         dist, elev, azim = self.regression2position(predict_position)
-        # target_image = self.normalize_target_image(target_image)
+        target_image = self.normalize_target_image(target_image)
 
         model = CameraPositionOptimizer(self.renderer, target_image, dist, elev, azim).to(config.cuda.device)
 
-        epochs = 1000
+        epochs = 50
         lr = 0.001
         loss_low_bound = 0.02
 
@@ -69,6 +67,9 @@ class FineTuner:
 
         return dist, elev, azim
 
+    def normalize_target_image(self, target_image):
+        return target_image[None, ...]
+
     @staticmethod
     def position2regression(position):
         position[0] = (position[0] - config.generate.moon_radius_gl) / config.generate.dist_between_moon_high_bound_gl
@@ -76,11 +77,6 @@ class FineTuner:
         position[2] /= (np.pi * 2)
 
         return position
-
-    @staticmethod
-    def normalize_target_image(target_image):
-        # TODO: Normalize target image
-        raise NotImplementedError
 
     @staticmethod
     def tensor_to_numpy(tensor_array):

@@ -77,5 +77,6 @@ class Pytorch3DRenderer:
         if config.cuda.device != 'cpu':
             image = image.cpu()
         img_data = image.numpy().squeeze() * 255
+        img_data = img_data.astype(np.uint8)
         img_data = cv2.cvtColor(img_data, cv2.COLOR_RGBA2BGR)
         return img_data
