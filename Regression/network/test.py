@@ -7,8 +7,11 @@ from tqdm import tqdm
 
 
 class TestNetwork(Network):
-    def __init__(self, model, data_loader, loss_func, epoch):
+    def __init__(self, model, data_loader, loss_func, epoch, is_fine_tune=False, small_dataset_size=0):
         super().__init__(model=model, data_loader=data_loader, loss_func=loss_func, epoch=epoch)
+        self.is_fine_tune = is_fine_tune
+        self.small_dataset_size = small_dataset_size
+
         self.predicts = []
         self.fine_tuned_predicts = []
         self.labels = []
@@ -19,10 +22,14 @@ class TestNetwork(Network):
 
     def run_one_epoch(self):
         self.model.eval()
+        batch_size = config.network.batch_size
 
         for idx, (inputs, labels) in tqdm(enumerate(self.get_data())):
             with torch.no_grad():
                 predicts = self.model(inputs)
+
+            if 0 < self.small_dataset_size <= batch_size * idx:
+                break
 
             self.add_predicts(predicts)
             self.add_labels(labels)
@@ -30,11 +37,12 @@ class TestNetwork(Network):
             loss = self.loss_func(predicts, labels)
             self.avg_loss += loss.item()
 
-            fine_tuned_predicts = self.fine_tuner.fine_tune_predict_positions(target_images=inputs,
-                                                                              predict_positions=predicts)
-            self.add_fine_tuned_predicts(fine_tuned_predicts)
+            if self.is_fine_tune:
+                fine_tuned_predicts = self.fine_tuner.fine_tune_predict_positions(target_images=inputs,
+                                                                                  predict_positions=predicts)
+                self.add_fine_tuned_predicts(fine_tuned_predicts)
 
-            del predicts, labels, fine_tuned_predicts
+            del predicts, labels
 
         self.avg_loss /= (config.dataset.test_dataset_num // config.network.batch_size)
 
@@ -49,11 +57,9 @@ class TestNetwork(Network):
             print('%d-th\tlabel\tpredict\tfine tuned predict' % (i + 1))
 
             for j in range(len(self.label_types)):
+                fine_tuned_predict = self.fine_tuned_predicts[i][j] if self.is_fine_tune else 0.0
                 print('%s\t%.3f\t%.3f\t%.3f' %
-                      (self.label_types[j],
-                       self.labels[i][j],
-                       self.predicts[i][j],
-                       self.fine_tuned_predicts[i][j]))
+                      (self.label_types[j], self.labels[i][j], self.predicts[i][j], fine_tuned_predict))
             print()
 
     def show_avg_loss(self):
@@ -67,6 +73,9 @@ class TestNetwork(Network):
         elev_predicts, elev_gts = self.predicts[:, 1], self.labels[:, 1]
         azim_predicts, azim_gts = self.predicts[:, 2], self.labels[:, 2]
         self.show_angle_error(elev_predicts, elev_gts, azim_predicts, azim_gts)
+
+        if not self.is_fine_tune:
+            return
 
         print('\n========After fine tune========')
         dist_predicts = self.fine_tuned_predicts[:, 0]
@@ -134,28 +143,32 @@ class TestNetwork(Network):
 
     def normalize_predicts_and_labels(self):
         self.predicts = np.concatenate(self.predicts)
-        self.fine_tuned_predicts = np.concatenate(self.fine_tuned_predicts)
         self.labels = np.concatenate(self.labels)
 
         self.predicts[:, 0] *= config.generate.dist_between_moon_high_bound_km
-        self.fine_tuned_predicts[:, 0] *= config.generate.dist_between_moon_high_bound_km
         self.labels[:, 0] *= config.generate.dist_between_moon_high_bound_km
+
+        if self.is_fine_tune:
+            self.fine_tuned_predicts = np.concatenate(self.fine_tuned_predicts)
+            self.fine_tuned_predicts[:, 0] *= config.generate.dist_between_moon_high_bound_km
 
         if len(self.label_types) >= 3:
             # elev
             self.predicts[:, 1] *= 90
-            self.fine_tuned_predicts[:, 1] *= 90
             self.labels[:, 1] *= 90
 
             # azim
             self.predicts[:, 2] *= 360
-            self.fine_tuned_predicts[:, 2] *= 360
             self.labels[:, 2] *= 360
 
-        if len(self.label_types) > 3:
-            self.predicts[:, 3:] /= config.dataset.normalize_point_weight
-            self.fine_tuned_predicts[:, 3:] /= config.dataset.normalize_point_weight
-            self.labels[:, 3:] /= config.dataset.normalize_point_weight
+            if self.is_fine_tune:
+                self.fine_tuned_predicts[:, 1] *= 90
+                self.fine_tuned_predicts[:, 2] *= 360
+
+        # if len(self.label_types) > 3:
+        #     self.predicts[:, 3:] /= config.dataset.normalize_point_weight
+        #     self.fine_tuned_predicts[:, 3:] /= config.dataset.normalize_point_weight
+        #     self.labels[:, 3:] /= config.dataset.normalize_point_weight
 
     def get_average_error(self, predicts, ground_truths, is_azim=False):
         assert isinstance(predicts, np.ndarray) and isinstance(ground_truths, np.ndarray)
