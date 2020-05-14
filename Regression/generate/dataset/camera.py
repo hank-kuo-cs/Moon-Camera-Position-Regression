@@ -52,18 +52,7 @@ class RandomCameraGenerator:
         if not config.generate.is_change_at:
             return
 
-        dist_low = 0
-        dist_high = config.generate.moon_radius_gl * 0.5
-        dist = np.random.uniform(low=dist_low, high=dist_high)
-        elev = self.get_random_elev()
-        azim = self.get_random_azim()
-
-        at_car_p = self.spherical_to_cartesian(dist, elev, azim)
-
-        eye_car_p = self.eye_cartesian_point
-        at_vec = at_car_p - eye_car_p
-        at_vec /= np.linalg.norm(at_vec)
-        at = at_car_p + at_vec
+        at = np.random.normal(loc=0, scale=0.01, size=3)
 
         self.at = at.tolist()
 
