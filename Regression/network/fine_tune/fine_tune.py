@@ -1,8 +1,8 @@
 import torch
 import numpy as np
-from torch.optim import Adam
+from tqdm import tqdm
 from ...generate.renderer import Pytorch3DRenderer
-from .camera_position_optimizer import CameraPositionOptimizer
+from .renderer_model import RendererModel
 from ...config import config
 
 
@@ -14,7 +14,7 @@ class FineTuner:
         fine_tuned_predicts = []
 
         batch_size = config.network.batch_size
-        for i in range(batch_size):
+        for i in range(1):
             target_image = target_images[i]
             predict_position = predict_positions[i]
 
@@ -30,25 +30,25 @@ class FineTuner:
         dist, elev, azim = self.regression2position(predict_position)
         target_image = self.normalize_target_image(target_image)
 
-        model = CameraPositionOptimizer(self.renderer, target_image, dist, elev, azim).to(config.cuda.device)
+        model = RendererModel(self.renderer, target_image, dist, elev, azim).to(config.cuda.device)
 
-        epochs = 50
+        epochs = 10
         lr = 0.001
         loss_low_bound = 0.02
 
-        optimizer = Adam(model.parameters(), lr=lr)
+        # optimizer = Adam(model.parameters(), lr=lr)
         best_position = [0.0, 0.0, 0.0]
         best_loss = 100
 
-        for i in range(epochs):
-            optimizer.zero_grad()
+        for i in tqdm(range(epochs)):
+            # optimizer.zero_grad()
 
-            loss = model()
+            now_loss = model()
 
-            loss.backward()
-            optimizer.step()
+            # loss.backward()
+            # optimizer.step()
 
-            now_loss = loss.item()
+            # now_loss = loss.item()
 
             if now_loss < best_loss:
                 best_loss = now_loss
