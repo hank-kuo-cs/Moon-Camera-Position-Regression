@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import numpy as np
 from torchvision import transforms
 from torch.nn import L1Loss, MSELoss
 from torch.optim import Adam
@@ -18,15 +19,20 @@ class RendererModel(nn.Module):
         self.dist_parameter = DistParameter(init_dist)
         self.angle_parameters = AngleParameters(init_elev, init_azim)
 
-        self.dist_optimizer = Adam(self.dist_parameter.parameters(), lr=0.0001, weight_decay=0.0001)
-        self.angles_optimizer = Adam(self.angle_parameters.parameters(), lr=0.001, weight_decay=0.001)
+        self.dist_optimizer = Adam(self.dist_parameter.parameters(),
+                                   lr=config.fine_tune.dist_optimizer_lr,
+                                   weight_decay=config.fine_tune.dist_w_decay)
+        self.angles_optimizer = Adam(self.angle_parameters.parameters(),
+                                     lr=config.fine_tune.angle_optimizer_lr,
+                                     weight_decay=config.fine_tune.angle_w_decay)
 
     def forward(self):
         self.reset_optimizer()
+        dist, elev, azim = self.get_camera_positions()
 
-        self.renderer.set_cameras(dist=self.dist_parameter.dist,
-                                  elev=self.angle_parameters.angles[0],
-                                  azim=self.angle_parameters.angles[1],
+        self.renderer.set_cameras(dist=dist,
+                                  elev=elev,
+                                  azim=azim,
                                   at=(0, 0, 0),
                                   up=(0, 1, 0))
         predict_image = self.renderer.render_image()
@@ -38,6 +44,21 @@ class RendererModel(nn.Module):
         self.update_optimizer()
 
         return loss.item()
+
+    def get_camera_positions(self):
+        dist_range = [config.generate.dist_low_gl, config.generate.dist_high_gl]
+        elev_range = [-np.pi / 2, np.pi / 2]
+        azim_range = [0, np.pi * 2]
+
+        dist = self.dist_parameter.dist
+        elev = self.angle_parameters.angles[0]
+        azim = self.angle_parameters.angles[1]
+
+        dist = torch.clamp(dist, dist_range[0], dist_range[1])
+        elev = torch.clamp(elev, elev_range[0], elev_range[1])
+        azim = torch.clamp(azim, azim_range[0], azim_range[1])
+
+        return dist, elev, azim
 
     def get_loss(self, predict_image):
         # loss = L1Loss()(predict_image, self.target_image)

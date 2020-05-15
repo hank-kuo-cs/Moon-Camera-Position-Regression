@@ -13,8 +13,7 @@ class FineTuner:
     def fine_tune_predict_positions(self, target_images, predict_positions):
         fine_tuned_predicts = []
 
-        batch_size = config.network.batch_size
-        for i in range(1):
+        for i in range(len(predict_positions)):
             target_image = target_images[i]
             predict_position = predict_positions[i]
 
@@ -32,29 +31,17 @@ class FineTuner:
 
         model = RendererModel(self.renderer, target_image, dist, elev, azim).to(config.cuda.device)
 
-        epochs = 10
-        lr = 0.001
-        loss_low_bound = 0.02
-
-        # optimizer = Adam(model.parameters(), lr=lr)
         best_position = [0.0, 0.0, 0.0]
-        best_loss = 100
+        best_loss = 10000.0
 
-        for i in tqdm(range(epochs)):
-            # optimizer.zero_grad()
-
+        for i in tqdm(range(config.fine_tune.epoch_num)):
             now_loss = model()
-
-            # loss.backward()
-            # optimizer.step()
-
-            # now_loss = loss.item()
 
             if now_loss < best_loss:
                 best_loss = now_loss
                 best_position = [model.dist, model.elev, model.azim]
 
-            if best_loss < loss_low_bound:
+            if best_loss < config.fine_tune.low_loss_bound:
                 break
 
         return best_position
@@ -67,7 +54,8 @@ class FineTuner:
 
         return dist, elev, azim
 
-    def normalize_target_image(self, target_image):
+    @staticmethod
+    def normalize_target_image(target_image):
         return target_image[None, ...]
 
     @staticmethod
