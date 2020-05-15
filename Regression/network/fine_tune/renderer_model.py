@@ -34,9 +34,9 @@ class CameraPositionOptimizer(nn.Module):
         return loss
 
     def refine_predict_image(self, predict_image):
-        predict_image = predict_image[..., [2, 1, 0]]
+        predict_image = predict_image[..., :3]
         predict_image = predict_image.reshape(3, self.img_size, self.img_size)
-        predict_image = transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])(predict_image)
+        predict_image = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])(predict_image)
 
         return predict_image[None, ...]
 
