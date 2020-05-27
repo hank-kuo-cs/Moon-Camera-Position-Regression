@@ -42,14 +42,15 @@ def render_one_image(dist, elev, azim, at=(0, 0, 0), up=(0, 1, 0), degree=False,
 
 def fine_tune():
     # dist (km)
+    device = config.cuda.device
     # render_one_image(dist=11, elev=1, azim=1, degree=True, image_name='init3.png')
     # render_one_image(dist=10, elev=0, azim=0, degree=True, image_name='target.png')
     fine_tuner = FineTuner()
-    target_image = load_image('target.png')
+    target_image = load_image('target.png').to(device)
 
     target_images = [target_image]
-    gt_positions = torch.tensor([[10 / 15, 0 / 180 * 2, 0 / 180 / 2]])
-    predict_positions = torch.tensor([[11 / 15, 1 / 180 * 2, 1 / 180 / 2]])
+    gt_positions = torch.tensor([[10 / 15, 0 / 180 * 2, 0 / 180 / 2]]).to(device)
+    predict_positions = torch.tensor([[11 / 15, 1 / 180 * 2, 1 / 180 / 2]]).to(device)
     print('target prediction:', gt_positions)
     print('coarse prediction:', predict_positions)
 
