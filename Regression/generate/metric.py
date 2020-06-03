@@ -89,7 +89,7 @@ def generate_metric_dataset():
 
         dist, elev, azim, at, up = random_camera_generator.get_random_camera()
 
-        print('\n0:', dist, elev, azim)
+        print('\n0:', get_gl_from_km_between_moon(dist), elev / np.pi * 180, azim / np.pi * 180)
 
         # a sample
         renderer.set_cameras(dist, elev, azim, at, up)
@@ -108,7 +108,7 @@ def generate_metric_dataset():
 
             renderer.set_cameras(random_dist, random_elev, random_azim, random_at, random_up)
 
-            print('%d:' % (j + 1), random_dist, random_elev, random_azim)
+            print('%d:' % (j + 1), get_gl_from_km_between_moon(random_dist), random_elev / np.pi * 180, random_azim / np.pi * 180)
 
             # x, y, z = transform_spherical_to_cartesian(random_dist, random_elev, random_azim)
 
