@@ -22,6 +22,28 @@ class RandomCameraGenerator:
 
         return dist, elev, azim, at, up
 
+    @staticmethod
+    def get_random_at():
+        at = np.random.normal(loc=0, scale=0.01, size=3)
+        return at
+
+    def get_random_up(self, dist, elev, azim, at):
+
+        eye = self.spherical_to_cartesian(dist, elev, azim)
+        at_vec = np.array(at) - eye
+
+        while True:
+            up = np.random.uniform(0, 1, 3)
+            up = np.cross(at_vec, up)
+            up = np.cross(up, at_vec)
+
+            up_length = np.linalg.norm(up)
+            if up_length != 0:
+                up /= up_length
+                break
+
+        return up.tolist()
+
     def reset(self):
         self.dist, self.elev, self.azim = 0.0, 0.0, 0.0
         self.at = [0.0, 0.0, 0.0]
