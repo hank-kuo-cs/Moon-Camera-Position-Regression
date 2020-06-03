@@ -2,6 +2,8 @@ import os
 import cv2
 import logging
 import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 from .dataset.camera import RandomCameraGenerator
 from .renderer import Pytorch3DRenderer
@@ -38,10 +40,9 @@ def get_gl_from_km_between_moon(dist):
 def get_random_dist_based_on_dist(dist):
     dist_high = config.generate.dist_high_gl
     dist_low = config.generate.dist_low_gl
-    dist_km = get_km_between_moon_from_gl(dist)
 
-    km_offset = np.random.uniform(0, dist_km * 0.5)
-    result = dist + km_offset * config.generate.km_to_gl * get_random_sign()
+    km_offset = np.random.normal(0, 0.5)
+    result = dist + km_offset * config.generate.km_to_gl
     result = np.clip(result, dist_low, dist_high)
 
     return result
@@ -75,26 +76,30 @@ def generate_metric_dataset():
     elev_bins = [0.0, 0.5, 1.0, 2.0, 4.0, 6.0]
     azim_bins = [0.0, 1.0, 3.0, 5.0, 8.0, 12.0]
 
-    xs = []
-    ys = []
-    zs = []
+    dataset_size = {
+        'train': 16000,
+        'test': 2000,
+        'valid': 2000
+    }
 
-    for i in tqdm(range(20000)):
-        if i < 16000:
+    for i in tqdm(range(dataset_size['train'] + dataset_size['test'] + dataset_size['valid'])):
+        if i < dataset_size['train']:
             dir_path = '/data/space/metric_dataset/train'
-        elif i < 18000:
+        elif i < dataset_size['train'] + dataset_size['test']:
             dir_path = '/data/space/metric_dataset/test'
         else:
             dir_path = '/data/space/metric_dataset/valid'
 
         dist, elev, azim, at, up = random_camera_generator.get_random_camera()
 
-        print('\n0:', get_km_between_moon_from_gl(dist), elev / np.pi * 180, azim / np.pi * 180)
-
-        # a sample
         renderer.set_cameras(dist, elev, azim, at, up)
         image = renderer.render_image()
         img_data = renderer.refine_image_to_data(image)
+
+        os.makedirs(os.path.join(dir_path, '%d' % i), exist_ok=True)
+
+        img_path = os.path.join(dir_path, '%d' % i, '0.png')
+        cv2.imwrite(img_path, img_data)
 
         for j in range(len(elev_bins) - 1):
             random_dist = get_random_dist_based_on_dist(dist)
@@ -108,14 +113,9 @@ def generate_metric_dataset():
 
             renderer.set_cameras(random_dist, random_elev, random_azim, random_at, random_up)
 
-            print('%d:' % (j + 1), get_km_between_moon_from_gl(random_dist), random_elev / np.pi * 180, random_azim / np.pi * 180, 'offset=', elev_offset, azim_offset)
+            random_image = renderer.render_image()
+            random_img_data = renderer.refine_image_to_data(random_image)
 
-            # x, y, z = transform_spherical_to_cartesian(random_dist, random_elev, random_azim)
+            img_path = os.path.join(dir_path, '%d' % i, '%d.png' % (j+1))
 
-            # random_image = renderer.render_image()
-            # random_img_data = renderer.refine_image_to_data(random_image)
-
-            # img_path = os.path.join(dir_path, '%d' % i, '%d.png' % j)
-            # os.makedirs(img_path, exist_ok=True)
-
-            # cv2.imwrite(img_path, random_img_data)
+            cv2.imwrite(img_path, random_img_data)
