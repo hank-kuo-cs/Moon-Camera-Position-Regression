@@ -89,9 +89,7 @@ def generate_metric_dataset():
 
         dist, elev, azim, at, up = random_camera_generator.get_random_camera()
 
-        dists = [dist]
-        elevs = [elev]
-        azims = [azim]
+        print('\n0:', dist, elev, azim)
 
         # a sample
         renderer.set_cameras(dist, elev, azim, at, up)
@@ -110,9 +108,7 @@ def generate_metric_dataset():
 
             renderer.set_cameras(random_dist, random_elev, random_azim, random_at, random_up)
 
-            dists.append(random_dist)
-            elevs.append(random_elev)
-            azims.append(random_azim)
+            print('%d:' % (j + 1), random_dist, random_elev, random_azim)
 
             # x, y, z = transform_spherical_to_cartesian(random_dist, random_elev, random_azim)
 
@@ -123,8 +119,3 @@ def generate_metric_dataset():
             # os.makedirs(img_path, exist_ok=True)
 
             # cv2.imwrite(img_path, random_img_data)
-
-        print(dists)
-        print(elevs)
-        print(azims)
-        print()
