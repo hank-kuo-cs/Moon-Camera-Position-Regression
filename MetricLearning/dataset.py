@@ -27,6 +27,11 @@ class MetricDataset(Dataset):
 
     def __getitem__(self, item):
         dir_num = int(item / 10)
+        if self.dataset_type == 'test':
+            dir_num += 16000
+        elif self.dataset_type == 'valid':
+            dir_num += 18000
+
         combination = self.combination[item % 10]
 
         dataset_path = '/data/space/metric_dataset/%s/%d' % (self.dataset_type, dir_num)
