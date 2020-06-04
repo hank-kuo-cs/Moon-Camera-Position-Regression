@@ -29,12 +29,15 @@ if __name__ == '__main__':
     tensorboard_writer = TensorboardWriter()
 
     for epoch in range(EPOCH_NUM):
+        n = 0
         logging.info('Epoch %d' % (epoch + 1))
         model.train()
 
         for i, data in enumerate(train_dataloader):
+            n += 1
             optimizer.zero_grad()
             s_imgs, p_imgs, n_imgs, margins = data[0].to(DEVICE), data[1].to(DEVICE), data[2].to(DEVICE), data[3].to(DEVICE)
+            batch_size = s_imgs.size(0)
             s_features, p_features, n_features = model(s_imgs, p_imgs, n_imgs)
 
             loss = loss_func(s_features, p_features, n_features, margins)
@@ -47,11 +50,11 @@ if __name__ == '__main__':
             if (i + 1) % 100 == 0:
                 avg_loss /= 100
                 logging.info('Loss step %d = %.6f' % (i+1, avg_loss))
-                epoch_steps = (epoch + 1) * len(train_dataset) / BATCH_SIZE
+                epoch_steps = (epoch + 1) * (len(train_dataset) / BATCH_SIZE / 100)
                 tensorboard_writer.add_scalar(tag='train/step_loss', x=epoch_steps+i+1, y=avg_loss)
                 avg_loss = 0
-        epoch_loss /= (len(train_dataset) / BATCH_SIZE)
-        logging.info('Epoch Loss = %.6f' % (epoch_loss / len(train_dataset) * BATCH_SIZE))
+        epoch_loss /= (len(train_dataset) / n)
+        logging.info('Epoch Loss = %.6f' % epoch_loss)
         tensorboard_writer.add_scalar(tag='train/epoch_loss', x=epoch+1, y=epoch_loss)
         epoch_loss = 0.0
 
