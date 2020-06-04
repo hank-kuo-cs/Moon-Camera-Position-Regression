@@ -53,7 +53,7 @@ if __name__ == '__main__':
                 epoch_steps = (epoch + 1) * (len(train_dataset) / BATCH_SIZE / 100)
                 tensorboard_writer.add_scalar(tag='train/step_loss', x=epoch_steps+i+1, y=avg_loss)
                 avg_loss = 0
-        epoch_loss /= (len(train_dataset) / n)
+        epoch_loss /= n
         logging.info('Epoch Loss = %.6f' % epoch_loss)
         tensorboard_writer.add_scalar(tag='train/epoch_loss', x=epoch+1, y=epoch_loss)
         epoch_loss = 0.0
