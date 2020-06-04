@@ -22,6 +22,28 @@ class RandomCameraGenerator:
 
         return dist, elev, azim, at, up
 
+    @staticmethod
+    def get_random_at():
+        at = np.random.normal(loc=0, scale=0.01, size=3)
+        return at
+
+    def get_random_up(self, dist, elev, azim, at):
+
+        eye = self.spherical_to_cartesian(dist, elev, azim)
+        at_vec = np.array(at) - eye
+
+        while True:
+            up = np.random.uniform(0, 1, 3)
+            up = np.cross(at_vec, up)
+            up = np.cross(up, at_vec)
+
+            up_length = np.linalg.norm(up)
+            if up_length != 0:
+                up /= up_length
+                break
+
+        return up.tolist()
+
     def reset(self):
         self.dist, self.elev, self.azim = 0.0, 0.0, 0.0
         self.at = [0.0, 0.0, 0.0]
@@ -52,32 +74,26 @@ class RandomCameraGenerator:
         if not config.generate.is_change_at:
             return
 
-        dist_low = 0
-        dist_high = config.generate.moon_radius_gl * 0.5
-        dist = np.random.uniform(low=dist_low, high=dist_high)
-        elev = self.get_random_elev()
-        azim = self.get_random_azim()
-
-        at_car_p = self.spherical_to_cartesian(dist, elev, azim)
-
-        eye_car_p = self.eye_cartesian_point
-        at_vec = at_car_p - eye_car_p
-        at_vec /= np.linalg.norm(at_vec)
-        at = at_car_p + at_vec
+        at = np.random.normal(loc=0, scale=0.01, size=3)
 
         self.at = at.tolist()
 
     def set_up(self):
-        if not config.generate.is_change_up:
-            up = np.random.uniform(0, 1, 3)
-        else:
-            up = deepcopy(self.up)
+        while True:
+            if not config.generate.is_change_up:
+                up = np.random.uniform(0, 1, 3)
+            else:
+                up = deepcopy(self.up)
 
-        at_vec = self.at_vec
+            at_vec = self.at_vec
 
-        up = np.cross(at_vec, up)
-        up = np.cross(up, at_vec)
-        up /= np.linalg.norm(up)
+            up = np.cross(at_vec, up)
+            up = np.cross(up, at_vec)
+
+            up_length = np.linalg.norm(up)
+            if up_length != 0:
+                up /= up_length
+                break
 
         self.up = up.tolist()
 

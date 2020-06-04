@@ -5,10 +5,11 @@ from .dataset import DatasetConfig
 from .generate import GenerateConfig
 from .network import NetworkConfig
 from .tensorboard import TensorboardConfig
+from .fine_tune import FineTuneConfig
 
 
 # If you want to use cpu or parallel gpus, please comment below code.
-os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 
 
 class Config:
@@ -18,7 +19,7 @@ class Config:
                                cuda_device_number=3,
                                parallel_gpus=[0, 2, 3])
 
-        self.dataset = DatasetConfig(dataset_path='/data/space/pytorch3d/Dataset_only_eye_15km_rgb_20w',
+        self.dataset = DatasetConfig(dataset_path='/data/space/pytorch3d/Dataset_15km_rgb_20w',
                                      labels=['dist', 'elev', 'azim'],
                                      dataset_size={'train': 160000, 'test': 20000, 'validation': 20000},
                                      sub_dataset_size=20000,
@@ -34,8 +35,8 @@ class Config:
                                        dist_between_moon_low_bound_km=1.0,
                                        dist_between_moon_high_bound_km=15.0,
                                        is_change_eye=True,
-                                       is_change_at=False,
-                                       is_change_up=False)
+                                       is_change_at=True,
+                                       is_change_up=True)
 
         self.network = NetworkConfig(network_model='VGG19',
                                      batch_size=10,
@@ -51,11 +52,18 @@ class Config:
                                      l_mse_u=1.0)
 
         self.tensorboard = TensorboardConfig(tensorboard_path='/home/hank/Tensorboard',
-                                             experiment_name='E4_OnlyEye20w_VGG19Pre_lambda_b10_lr1e3_sgd',
+                                             experiment_name='E5_20w_VGG19Pre_lambda_b10_lr1e3_sgd',
                                              loss_step=200,
                                              tsne_epoch_step=50,
                                              is_write_loss=True,
                                              is_write_tsne=False)
+
+        self.fine_tune = FineTuneConfig(dist_optimizer_lr=0.001,
+                                        dist_w_decay=0.001,
+                                        angle_optimizer_lr=0.005,
+                                        angle_w_decay=0.005,
+                                        low_loss_bound=0.01,
+                                        epoch_num=5)
 
     def export_config_to_tensorboard_dir(self):
         file_out_path = os.path.join(self.tensorboard.tensorboard_path, self.tensorboard.experiment_name + '_config.txt')

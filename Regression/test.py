@@ -16,6 +16,8 @@ class Testing:
     def __init__(self, args, data_loader):
         self._epoch_of_model = ''
         self._epoch = 0
+        self._is_fine_tune = None
+        self._small_dataset_size = None
         self.set_arguments(args)
 
         self.network = None
@@ -32,12 +34,16 @@ class Testing:
 
     def set_arguments(self, args):
         self._epoch_of_model = args.epoch_of_model
+        self._is_fine_tune = args.fine_tune
+        self._small_dataset_size = args.small_dataset
 
     def set_network(self):
         self.network = TestNetwork(data_loader=self.data_loader,
                                    model=self.model,
                                    loss_func=self.loss_func,
-                                   epoch=self._epoch)
+                                   epoch=self._epoch,
+                                   is_fine_tune=self._is_fine_tune,
+                                   small_dataset_size=self._small_dataset_size)
 
     def set_model(self):
         models = {'VGG19': VGG19,
@@ -94,9 +100,12 @@ def test():
     config.print_config()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', '--epoch_of_model',
-                        type=str,
+    parser.add_argument('-e', '--epoch_of_model', type=str,
                         help='Use a model with specific epoch in checkpoint directory to test')
+    parser.add_argument('-ft', '--fine_tune', action='store_true',
+                        help='Use fine tune method after the prediction of model')
+    parser.add_argument('-sd', '--small_dataset', type=int, default=0,
+                        help='Use small testing dataset (1/10) to test')
 
     arguments = parser.parse_args()
 
