@@ -1,9 +1,28 @@
+import cv2
 import torch
 import numpy as np
 from tqdm import tqdm
 from ...generate.renderer import Pytorch3DRenderer
 from .renderer_model import RendererModel
 from ...config import config
+
+
+def render_one_image(dist, elev, azim, at=(0, 0, 0), up=(0, 1, 0), degree=False, image_name='result.png'):
+    if degree:
+        elev *= (np.pi / 180)
+        azim *= (np.pi / 180)
+
+    moon_radius = config.generate.moon_radius_gl
+    km2gl = config.generate.km_to_gl
+
+    dist = dist * km2gl + moon_radius
+
+    renderer = Pytorch3DRenderer()
+    renderer.set_cameras(dist, elev, azim, at, up)
+    predict_image = renderer.render_image()
+
+    refine_image = renderer.refine_image_to_data(predict_image)
+    cv2.imwrite(image_name, refine_image)
 
 
 class FineTuner:
@@ -34,8 +53,13 @@ class FineTuner:
         best_position = [0.0, 0.0, 0.0]
         best_loss = 10000.0
 
-        for i in tqdm(range(config.fine_tune.epoch_num)):
+        for i in range(config.fine_tune.epoch_num):
             now_loss = model()
+            fine_tune_prediction = self.position2regression([model.dist, model.elev, model.azim])
+
+            print('\nepoch %d' % (i + 1))
+            print('loss = %.6f' % now_loss)
+            print('prediction:', fine_tune_prediction)
 
             if now_loss < best_loss:
                 best_loss = now_loss

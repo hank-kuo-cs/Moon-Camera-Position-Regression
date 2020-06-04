@@ -4,7 +4,7 @@ import numpy as np
 from torchvision import transforms
 from torch.nn import L1Loss, MSELoss
 from ...loss import SSIM
-from ..triplet_angle_feature_extractor import CustomAngleLoss
+# from ..triplet_angle_feature_extractor import CustomAngleLoss
 from torch.optim import Adam
 from ...config import config
 
@@ -16,7 +16,10 @@ class RendererModel(nn.Module):
         self.img_size = config.generate.image_size
         self.device = config.cuda.device
         self.target_image = target_image
-        self.loss_func = CustomAngleLoss()
+        self.l1_loss_func = L1Loss()
+        self.mse_loss_func = MSELoss()
+        self.ssim_loss_func = SSIM()
+        # self.custom_angle_loss_func = CustomAngleLoss()
 
         self.dist_parameter = DistParameter(init_dist)
         self.angle_parameters = AngleParameters(init_elev, init_azim)
@@ -66,7 +69,7 @@ class RendererModel(nn.Module):
         # loss = L1Loss()(predict_image, self.target_image)
         # loss = MSELoss()(predict_image, self.target_image)
         # loss = 1 - SSIM()(self.target_image, predict_image)
-        loss = self.loss_func(predict_image, self.target_image)
+        # loss = se1lf.loss_func(predict_image, self.target_image)
 
         return loss
 
