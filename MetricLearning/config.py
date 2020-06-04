@@ -1,0 +1,6 @@
+MARGIN = 0.2
+EXPERIMENT_NAME = 'metric_resnet18_b3_sgd_lr1e3'
+LEARNING_RATE = 0.001
+EPOCH_NUM = 300
+BATCH_SIZE = 5
+DEVICE = 'cuda'
