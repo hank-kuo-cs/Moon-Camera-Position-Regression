@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     correct_num = 0
 
-    logging.info('Test epoch %d' % epoch_num)
+    logging.info('Test epoch %d' % int(epoch_num))
     with torch.no_grad():
         model.eval()
         for i, data in tqdm(enumerate(test_dataloader)):
