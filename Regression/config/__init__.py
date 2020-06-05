@@ -38,7 +38,7 @@ class Config:
                                        is_change_at=True,
                                        is_change_up=True)
 
-        self.network = NetworkConfig(network_model='VGG19',
+        self.network = NetworkConfig(network_model='ResNet18',
                                      batch_size=10,
                                      epoch_num=300,
                                      learning_rate=0.001,
@@ -52,18 +52,18 @@ class Config:
                                      l_mse_u=1.0)
 
         self.tensorboard = TensorboardConfig(tensorboard_path='/home/hank/Tensorboard',
-                                             experiment_name='E5_20w_VGG19Pre_lambda_b10_lr1e3_sgd',
+                                             experiment_name='E6_20w_res18Pre_lambda_b10_lr1e3_sgd',
                                              loss_step=200,
                                              tsne_epoch_step=50,
                                              is_write_loss=True,
                                              is_write_tsne=False)
 
-        self.fine_tune = FineTuneConfig(dist_optimizer_lr=0.001,
-                                        dist_w_decay=0.001,
-                                        angle_optimizer_lr=0.005,
-                                        angle_w_decay=0.005,
-                                        low_loss_bound=0.01,
-                                        epoch_num=5)
+        self.fine_tune = FineTuneConfig(dist_optimizer_lr=0.0,
+                                        dist_w_decay=0.0,
+                                        elev_optimizer_lr=0.001,
+                                        azim_optimizer_lr=0.0005,
+                                        low_loss_bound=0.0001,
+                                        epoch_num=50)
 
     def export_config_to_tensorboard_dir(self):
         file_out_path = os.path.join(self.tensorboard.tensorboard_path, self.tensorboard.experiment_name + '_config.txt')
