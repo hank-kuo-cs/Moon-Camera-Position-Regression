@@ -30,7 +30,7 @@ if __name__ == '__main__':
     test_dataset = MetricDataset('test')
     test_dataloader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
 
-    epoch_to_test = arguments.epoch_of_pretrain
+    epoch_to_test = int(arguments.epoch_of_pretrain)
     model_path = sorted(glob('checkpoint/model_epoch*'))[-1] if not epoch_to_test else 'checkpoint/model_epoch%.3d.pth' % epoch_to_test
     epoch_num = re.findall(r'epoch(.+?)\.pth', model_path)[0]
 
