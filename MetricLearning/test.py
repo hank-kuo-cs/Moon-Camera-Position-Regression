@@ -45,7 +45,7 @@ if __name__ == '__main__':
     with torch.no_grad():
         model.eval()
         for i, data in tqdm(enumerate(test_dataloader)):
-            s_imgs, p_imgs, n_imgs, combination = data[0].to(DEVICE), data[1].to(DEVICE), data[2].to(DEVICE), data[3].tolist()
+            s_imgs, p_imgs, n_imgs, combination = data[0].to(DEVICE), data[1].to(DEVICE), data[2].to(DEVICE), data[3]
             s_features, p_features, n_features = model(s_imgs, p_imgs, n_imgs)
 
             for b in range(s_features.size(0)):
