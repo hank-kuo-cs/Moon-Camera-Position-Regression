@@ -44,7 +44,7 @@ class MetricDataset(Dataset):
         margin = MARGIN * (combination[1] - combination[0])
         margin = torch.tensor([margin], dtype=torch.float)
         if self.dataset_type == 'test':
-            return s_img, p_img, n_img, torch.tensor(combination)
+            return s_img, p_img, n_img, torch.tensor(item % 10)
         return s_img, p_img, n_img, margin
 
     def load_img(self, img_path):

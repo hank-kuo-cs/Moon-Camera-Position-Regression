@@ -46,7 +46,6 @@ if __name__ == '__main__':
         model.eval()
         for i, data in tqdm(enumerate(test_dataloader)):
             s_imgs, p_imgs, n_imgs, combinations = data[0].to(DEVICE), data[1].to(DEVICE), data[2].to(DEVICE), data[3]
-            print(combinations.size())
             s_features, p_features, n_features = model(s_imgs, p_imgs, n_imgs)
 
             combinations = combinations.tolist()
