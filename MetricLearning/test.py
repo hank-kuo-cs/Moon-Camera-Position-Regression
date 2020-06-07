@@ -39,6 +39,7 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load(model_path))
 
     correct_num = 0
+    metric_correct_num = {}
 
     logging.info('Test epoch %d' % int(epoch_num))
     with torch.no_grad():
@@ -47,7 +48,21 @@ if __name__ == '__main__':
             s_imgs, p_imgs, n_imgs, margins = data[0].to(DEVICE), data[1].to(DEVICE), data[2].to(DEVICE), data[3].to(DEVICE)
             s_features, p_features, n_features = model(s_imgs, p_imgs, n_imgs)
 
+            for b in range(s_features.size(0)):
+                if margins[b] not in metric_correct_num:
+                    metric_correct_num[margins[b]] = 0
+
+                d_p = abs(s_features[b] - p_features[b]).mean()
+                d_n = abs(s_features[b] - n_features[b]).mean()
+
+                if d_p < d_n:
+                    metric_correct_num[margins[b]] += 1
+
             correct_num += get_correct_num(s_features, p_features, n_features)
 
     accuracy = correct_num / len(test_dataset) * 100
     logging.info('Accuracy = %.3f' % accuracy)
+
+    print('Each interval accuracy:')
+    for k, v in metric_correct_num.items():
+        print(k, v / len(test_dataset) * 10)
