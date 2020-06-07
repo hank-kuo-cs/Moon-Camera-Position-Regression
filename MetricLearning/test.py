@@ -66,5 +66,5 @@ if __name__ == '__main__':
     logging.info('Accuracy = %.3f' % accuracy)
 
     print('Each interval accuracy:')
-    for k, v in metric_correct_num.items():
-        print(k, v / len(test_dataset) * 10)
+    for k in sorted(metric_correct_num.keys()):
+        print(k, metric_correct_num[k] / len(test_dataset) * 10)
