@@ -45,18 +45,20 @@ if __name__ == '__main__':
     with torch.no_grad():
         model.eval()
         for i, data in tqdm(enumerate(test_dataloader)):
-            s_imgs, p_imgs, n_imgs, combination = data[0].to(DEVICE), data[1].to(DEVICE), data[2].to(DEVICE), data[3]
+            s_imgs, p_imgs, n_imgs, combinations = data[0].to(DEVICE), data[1].to(DEVICE), data[2].to(DEVICE), data[3]
             s_features, p_features, n_features = model(s_imgs, p_imgs, n_imgs)
 
+            combinations = combinations.tolist()
+
             for b in range(s_features.size(0)):
-                if combination[b] not in metric_correct_num:
-                    metric_correct_num[combination[b]] = 0
+                if combinations[b] not in metric_correct_num:
+                    metric_correct_num[combinations[b]] = 0
 
                 d_p = abs(s_features[b] - p_features[b]).mean()
                 d_n = abs(s_features[b] - n_features[b]).mean()
 
                 if d_p < d_n:
-                    metric_correct_num[combination[b]] += 1
+                    metric_correct_num[combinations[b]] += 1
 
             correct_num += get_correct_num(s_features, p_features, n_features)
 
